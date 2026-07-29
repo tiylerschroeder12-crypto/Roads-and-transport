@@ -1,0 +1,63 @@
+name: RoadsAndTransport
+version: ${version}
+main: com.tiyler.roadstransport.RoadsAndTransportPlugin
+api-version: '26.2'
+authors: [Tiyler]
+description: Roads, waypoints, homes, physical mail, cargo horses, and caravan trade for civilization servers.
+depend: [KingdomsAndCurrency]
+
+commands:
+  createwaypoint:
+    description: Create a public or personal waypoint.
+    usage: /createwaypoint <public <name>|personal>
+    permission: roadsandtransport.use
+  waypoint:
+    description: Manage and inspect waypoints.
+    usage: /waypoint <remove|adopt|access|info>
+    permission: roadsandtransport.use
+  createmailbox:
+    description: Set the center of your five-block mail delivery area.
+    usage: /createmailbox
+    permission: roadsandtransport.use
+  mailbox:
+    description: Manage your mail delivery area.
+    usage: /mailbox <remove|info>
+    permission: roadsandtransport.use
+  mail:
+    description: Send barrels as physical mail crates or check shipment status.
+    usage: /mail <send <player>|rush send <player>|status>
+    permission: roadsandtransport.use
+  createhome:
+    description: Create one of your two named homes.
+    usage: /createhome <home name>
+    permission: roadsandtransport.use
+  home:
+    description: Teleport to a named home.
+    usage: /home <home name>
+    permission: roadsandtransport.use
+  deletehome:
+    description: Delete a named home and its free home claim, if any.
+    usage: /deletehome <home name>
+    permission: roadsandtransport.use
+  horseinfo:
+    description: Inspect the horse you are looking at.
+    usage: /horseinfo
+    permission: roadsandtransport.use
+  horsetrust:
+    description: Allow a player to use the cargo of the horse you are looking at.
+    usage: /horsetrust <player>
+    permission: roadsandtransport.use
+  horseuntrust:
+    description: Remove a player's access to the horse you are looking at.
+    usage: /horseuntrust <player>
+    permission: roadsandtransport.use
+  rat:
+    description: RoadsAndTransport administration and help.
+    usage: /rat <help|reload|save>
+    permission: roadsandtransport.use
+
+permissions:
+  roadsandtransport.use:
+    default: true
+  roadsandtransport.admin:
+    default: op

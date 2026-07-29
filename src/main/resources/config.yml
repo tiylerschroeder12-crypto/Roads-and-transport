@@ -1,0 +1,55 @@
+roads:
+  check-interval-ticks: 5
+  path-speed-amplifier: 0
+  powered-road-speed-amplifier: 1
+  affect-mounted-players: false
+
+waypoints:
+  creation-cost: 300
+  public-fare: 25
+  personal-fare: 5
+  personal-access-cost: 100
+  warmup-seconds: 10
+  safe-radius: 8
+  label-height: 2.0
+  public-limit-default: 4
+  public-limits:
+    PEASANTRY: 4
+    BARONY: 4
+    KNIGHT_ERRANT: 4
+    LORDSHIP: 4
+    DUKESHIP: 4
+    KINGDOM: 4
+  blocked-at-night: true
+  night-start: 12300
+  night-end: 23850
+
+homes:
+  maximum: 2
+  warmup-seconds: 10
+  blocked-at-night: true
+  safe-radius: 3
+
+mail:
+  normal-cost: 5
+  rush-base-cost: 10
+  rush-cost-per-occupied-slot: 1
+  delivery-delay-ticks: 24000
+  delivery-radius: 5
+  retry-interval-ticks: 200
+
+horses:
+  cargo-slots: 54
+  maximum-speed-tier: 3
+  speed-multiplier-per-tier: 0.15
+  inheritance-chance-per-parent: 0.50
+  minimum-caravan-gold: 9
+  reward-every-unique-chunks: 4
+  hostile-target-radius: 24.0
+  hostile-target-interval-ticks: 40
+  exclude-creepers-from-cargo-targeting: false
+  movement-scan-interval-ticks: 10
+  maximum-legitimate-chunk-step: 1
+
+data:
+  autosave-ticks: 1200
