@@ -16,9 +16,13 @@ commands:
     usage: /waypoint <remove|adopt|access|info>
     permission: roadsandtransport.use
   createmailbox:
-    description: Set the center of your five-block mail delivery area.
-    usage: /createmailbox
+    description: Create and name your five-block mail delivery area.
+    usage: /createmailbox <mailbox name>
     permission: roadsandtransport.use
+  createmailboxfor:
+    description: Create a named mail delivery area for another player at your location.
+    usage: /createmailboxfor <player> <mailbox name>
+    permission: roadsandtransport.admin
   mailbox:
     description: Manage your mail delivery area.
     usage: /mailbox <remove|info>

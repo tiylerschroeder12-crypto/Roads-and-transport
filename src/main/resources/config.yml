@@ -43,6 +43,7 @@ horses:
   maximum-speed-tier: 3
   speed-multiplier-per-tier: 0.15
   inheritance-chance-per-parent: 0.50
+  enchanted-apple-success-chance: 0.25
   minimum-caravan-gold: 9
   reward-every-unique-chunks: 4
   hostile-target-radius: 24.0

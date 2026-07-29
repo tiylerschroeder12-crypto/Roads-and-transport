@@ -123,7 +123,19 @@ public final class DataManager {
         for (String key : root.getKeys(false)) {
             try {
                 UUID owner = UUID.fromString(key);
-                result.put(owner, new MailArea(owner, BlockKey.deserialize(Objects.requireNonNull(root.getString(key)))));
+                ConfigurationSection area = root.getConfigurationSection(key);
+                if (area == null) {
+                    // Backward compatibility with 0.1.0-alpha, which stored only the center string.
+                    String legacyCenter = root.getString(key);
+                    if (legacyCenter == null) continue;
+                    result.put(owner, new MailArea(owner, BlockKey.deserialize(legacyCenter), "Mailbox", null));
+                    continue;
+                }
+                BlockKey center = BlockKey.deserialize(Objects.requireNonNull(area.getString("center")));
+                String name = area.getString("name", "Mailbox");
+                String signValue = area.getString("sign-block");
+                BlockKey signBlock = signValue == null ? null : BlockKey.deserialize(signValue);
+                result.put(owner, new MailArea(owner, center, name, signBlock));
             } catch (Exception ex) {
                 plugin.getLogger().warning("Skipping invalid mail area " + key + ": " + ex.getMessage());
             }
@@ -166,7 +178,12 @@ public final class DataManager {
 
     public void saveMail(Collection<MailArea> areas, Collection<Shipment> shipments) {
         YamlConfiguration yaml = new YamlConfiguration();
-        for (MailArea area : areas) yaml.set("areas." + area.ownerId(), area.center().serialize());
+        for (MailArea area : areas) {
+            String p = "areas." + area.ownerId();
+            yaml.set(p + ".center", area.center().serialize());
+            yaml.set(p + ".name", area.name());
+            yaml.set(p + ".sign-block", area.signBlock() == null ? null : area.signBlock().serialize());
+        }
         for (Shipment shipment : shipments) {
             String p = "shipments." + shipment.id();
             yaml.set(p + ".sender", shipment.senderId().toString());
@@ -198,6 +215,7 @@ public final class DataManager {
                 HorseRecord record = new HorseRecord(id);
                 record.ownerId(nullableUuid(s.getString("owner")));
                 record.speedTier(s.getInt("speed-tier", 0));
+                record.enchantedAppleUpgradeApplied(s.getBoolean("enchanted-apple-upgrade-applied", false));
                 record.baseMovementSpeed(s.getDouble("base-speed", 0.0));
                 record.cargoAttached(s.getBoolean("cargo-attached", false));
                 List<ItemStack> cargo = itemList(s.getList("cargo"));
@@ -222,6 +240,7 @@ public final class DataManager {
             String p = "horses." + record.horseId();
             yaml.set(p + ".owner", record.ownerId() == null ? null : record.ownerId().toString());
             yaml.set(p + ".speed-tier", record.speedTier());
+            yaml.set(p + ".enchanted-apple-upgrade-applied", record.enchantedAppleUpgradeApplied());
             yaml.set(p + ".base-speed", record.baseMovementSpeed());
             yaml.set(p + ".cargo-attached", record.cargoAttached());
             yaml.set(p + ".cargo", record.cargo());

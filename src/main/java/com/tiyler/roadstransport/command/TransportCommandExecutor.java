@@ -4,6 +4,7 @@ import com.tiyler.roadstransport.RoadsAndTransportPlugin;
 import com.tiyler.roadstransport.bridge.KingdomsBridge;
 import com.tiyler.roadstransport.service.*;
 import com.tiyler.roadstransport.util.Messages;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -43,7 +44,8 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
         switch (command.getName().toLowerCase(Locale.ROOT)) {
             case "createwaypoint" -> createWaypoint((Player) sender, args);
             case "waypoint" -> waypoint((Player) sender, args);
-            case "createmailbox" -> mail.createArea((Player) sender);
+            case "createmailbox" -> createMailbox((Player) sender, args);
+            case "createmailboxfor" -> createMailboxFor((Player) sender, args);
             case "mailbox" -> mailbox((Player) sender, args);
             case "mail" -> mail((Player) sender, args);
             case "createhome" -> {
@@ -113,6 +115,27 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
         }
     }
 
+    private void createMailbox(Player player, String[] args) {
+        if (args.length == 0) {
+            Messages.error(player, "Usage: /createmailbox <mailbox name>");
+            return;
+        }
+        mail.createArea(player, join(args, 0));
+    }
+
+    private void createMailboxFor(Player player, String[] args) {
+        if (args.length < 2) {
+            Messages.error(player, "Usage: /createmailboxfor <player> <mailbox name>");
+            return;
+        }
+        OfflinePlayer target = kingdoms.offlinePlayer(args[0]);
+        if (target == null) {
+            Messages.error(player, "That player could not be found.");
+            return;
+        }
+        mail.createAreaFor(player, target, join(args, 1));
+    }
+
     private void mailbox(Player player, String[] args) {
         if (args.length == 0 || args[0].equalsIgnoreCase("info")) {
             mail.areaInfo(player);
@@ -160,7 +183,8 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
             case "help" -> {
                 Messages.info(sender, "RoadsAndTransport commands:");
                 Messages.info(sender, "/createwaypoint public <name>, /createwaypoint personal, /waypoint <remove|adopt|info|access>");
-                Messages.info(sender, "/createmailbox, /mailbox <remove|info>, /mail <send|rush send|status>");
+                Messages.info(sender, "/createmailbox <name>, /createmailboxfor <player> <name>, /mailbox <remove|info>");
+                Messages.info(sender, "/mail <send|rush send|status>");
                 Messages.info(sender, "/createhome <name>, /home <name>, /deletehome <name>");
                 Messages.info(sender, "/horseinfo, /horsetrust <player>, /horseuntrust <player>");
             }
@@ -197,6 +221,9 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
         if (name.equals("waypoint")) {
             if (args.length == 1) values.addAll(List.of("remove", "adopt", "info", "access"));
             else if (args.length == 2 && args[0].equalsIgnoreCase("access")) values.addAll(List.of("add", "remove"));
+        }
+        if (name.equals("createmailboxfor") && args.length == 1) {
+            values.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
         }
         if (name.equals("mailbox") && args.length == 1) values.addAll(List.of("remove", "info"));
         if (name.equals("mail")) {

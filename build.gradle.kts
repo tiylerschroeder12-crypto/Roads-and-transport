@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.tiyler"
-version = "0.1.0-alpha"
+version = "0.1.1-alpha"
 
 repositories {
     maven {

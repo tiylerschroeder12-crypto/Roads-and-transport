@@ -39,7 +39,7 @@ public final class RoadsAndTransportPlugin extends JavaPlugin {
 
         TransportCommandExecutor commands = new TransportCommandExecutor(this, kingdoms, waypoints, mail, homes, horses);
         for (String commandName : List.of(
-                "createwaypoint", "waypoint", "createmailbox", "mailbox", "mail",
+                "createwaypoint", "waypoint", "createmailbox", "createmailboxfor", "mailbox", "mail",
                 "createhome", "home", "deletehome", "horseinfo", "horsetrust", "horseuntrust", "rat"
         )) {
             PluginCommand command = getCommand(commandName);
@@ -63,9 +63,11 @@ public final class RoadsAndTransportPlugin extends JavaPlugin {
             waypoints.ensureAllDisplays();
             mail.removeAllLabels();
             mail.ensureLabels();
+            mail.ensureAreaSigns();
         });
         Bukkit.getScheduler().runTaskTimer(this, waypoints::tickDisplays, 20L, 100L);
         Bukkit.getScheduler().runTaskTimer(this, mail::ensureLabels, 20L, 100L);
+        Bukkit.getScheduler().runTaskTimer(this, mail::ensureAreaSigns, 20L, 200L);
         long mailRetry = Math.max(20L, getConfig().getLong("mail.retry-interval-ticks", 200L));
         Bukkit.getScheduler().runTaskTimer(this, mail::processDueShipments, mailRetry, mailRetry);
         long horseMovement = Math.max(1L, getConfig().getLong("horses.movement-scan-interval-ticks", 10L));

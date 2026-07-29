@@ -34,6 +34,7 @@ public final class HorseService {
     private final int maximumTier;
     private final double multiplierPerTier;
     private final double inheritanceChance;
+    private final double enchantedAppleSuccessChance;
     private final long minimumCaravanGold;
     private final int rewardEveryChunks;
     private final int maximumChunkStep;
@@ -51,6 +52,8 @@ public final class HorseService {
         maximumTier = plugin.getConfig().getInt("horses.maximum-speed-tier", 3);
         multiplierPerTier = plugin.getConfig().getDouble("horses.speed-multiplier-per-tier", 0.15);
         inheritanceChance = plugin.getConfig().getDouble("horses.inheritance-chance-per-parent", 0.50);
+        enchantedAppleSuccessChance = Math.max(0.0, Math.min(1.0,
+                plugin.getConfig().getDouble("horses.enchanted-apple-success-chance", 0.25)));
         minimumCaravanGold = plugin.getConfig().getLong("horses.minimum-caravan-gold", 9);
         rewardEveryChunks = Math.max(1, plugin.getConfig().getInt("horses.reward-every-unique-chunks", 4));
         maximumChunkStep = Math.max(1, plugin.getConfig().getInt("horses.maximum-legitimate-chunk-step", 1));
@@ -170,6 +173,8 @@ public final class HorseService {
         long gold = cargoGold(record);
         int occupied = (int) record.cargo().stream().filter(item -> item != null && !item.getType().isAir()).count();
         Messages.info(player, "Horse speed tier: " + record.speedTier() + "/" + maximumTier + ".");
+        Messages.info(player, "Enchanted-apple speed increase: "
+                + (record.enchantedAppleUpgradeApplied() ? "already used" : "available") + ".");
         Messages.info(player, "Cargo: " + (record.cargoAttached() ? occupied + "/" + cargoSlots + " slots" : "not attached") + ".");
         Messages.info(player, "Cargo gold: " + gold + "g. Enhanced speed is " + (gold > 0 ? "suppressed" : "active") + ".");
         if (gold >= minimumCaravanGold) {
@@ -275,15 +280,24 @@ public final class HorseService {
             Messages.error(player, "Only the horse's owner may permanently improve it.");
             return;
         }
+        if (record.enchantedAppleUpgradeApplied()) {
+            Messages.error(player, "This horse has already gained its one enchanted-apple speed increase.");
+            return;
+        }
         if (record.speedTier() >= maximumTier) {
             Messages.error(player, "This horse has already reached Speed " + maximumTier + ".");
             return;
         }
         held.setAmount(held.getAmount() - 1);
+        if (ThreadLocalRandom.current().nextDouble() >= enchantedAppleSuccessChance) {
+            Messages.info(player, "The enchanted golden apple has no lasting effect.");
+            return;
+        }
         record.speedTier(record.speedTier() + 1);
+        record.enchantedAppleUpgradeApplied(true);
         applySpeed(horse, record);
         save();
-        Messages.success(player, "The horse permanently advanced to Speed " + record.speedTier() + ".");
+        Messages.success(player, "Your horse's eyes seem to be invigorated");
     }
 
     private void attachCargo(Player player, Horse horse, HorseRecord record, ItemStack chest) {

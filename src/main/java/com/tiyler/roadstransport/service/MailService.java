@@ -11,7 +11,9 @@ import org.bukkit.*;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
@@ -33,6 +35,8 @@ public final class MailService {
     private final Map<UUID, UUID> labelByShipment = new HashMap<>();
     private final NamespacedKey labelKey;
     private final NamespacedKey shipmentKey;
+    private final NamespacedKey mailboxSignKey;
+    private final NamespacedKey mailboxOwnerKey;
     private final int normalCost;
     private final int rushBaseCost;
     private final int rushPerSlot;
@@ -52,6 +56,8 @@ public final class MailService {
         }
         labelKey = new NamespacedKey(plugin, "mail_crate_label");
         shipmentKey = new NamespacedKey(plugin, "mail_shipment_id");
+        mailboxSignKey = new NamespacedKey(plugin, "mailbox_area_sign");
+        mailboxOwnerKey = new NamespacedKey(plugin, "mailbox_area_owner");
         normalCost = plugin.getConfig().getInt("mail.normal-cost", 5);
         rushBaseCost = plugin.getConfig().getInt("mail.rush-base-cost", 10);
         rushPerSlot = plugin.getConfig().getInt("mail.rush-cost-per-occupied-slot", 1);
@@ -64,22 +70,69 @@ public final class MailService {
         dataManager.saveMail(areas.values(), shipments.values());
     }
 
-    public void createArea(Player player) {
-        if (!kingdoms.canBuild(player, player.getLocation())) {
-            Messages.error(player, "You may only create a mail delivery area where you are allowed to build.");
+    public void createArea(Player player, String name) {
+        createAreaFor(player, player, name, false);
+    }
+
+    public void createAreaFor(Player creator, OfflinePlayer owner, String name) {
+        if (!creator.hasPermission("roadsandtransport.admin")) {
+            Messages.error(creator, "You do not have permission to create another player's mail area.");
             return;
         }
-        BlockKey center = BlockKey.of(player.getLocation());
-        areas.put(player.getUniqueId(), new MailArea(player.getUniqueId(), center));
+        createAreaFor(creator, owner, name, true);
+    }
+
+    private void createAreaFor(Player creator, OfflinePlayer owner, String name, boolean targeted) {
+        if (owner == null || owner.getName() == null) {
+            Messages.error(creator, "That player could not be found.");
+            return;
+        }
+        String clean = name == null ? "" : name.trim();
+        if (clean.isBlank() || clean.length() > 32) {
+            Messages.error(creator, "Mailbox names must be between 1 and 32 characters.");
+            return;
+        }
+        if (!kingdoms.canBuild(creator, creator.getLocation())) {
+            Messages.error(creator, "You may only create a mail delivery area where you are allowed to build.");
+            return;
+        }
+
+        MailArea existing = areas.get(owner.getUniqueId());
+        if (existing != null) removeMailboxSign(existing);
+
+        Location centerLocation = creator.getLocation().getBlock().getLocation();
+        Location signLocation = findMailboxSignPlacement(centerLocation);
+        if (signLocation == null) {
+            if (existing != null) ensureMailboxSign(existing);
+            Messages.error(creator, "No open ground was found at the edge of the five-block mail area for its sign.");
+            return;
+        }
+
+        BlockKey center = BlockKey.of(centerLocation);
+        BlockKey signBlock = BlockKey.of(signLocation);
+        MailArea area = new MailArea(owner.getUniqueId(), center, clean, signBlock);
+        areas.put(owner.getUniqueId(), area);
+        placeMailboxSign(area, owner.getName());
         save();
-        Messages.success(player, "Your five-block mail delivery area is now centered here.");
+
+        if (targeted) {
+            Messages.success(creator, "Created " + owner.getName() + "'s mailbox area, " + clean + ".");
+            Player onlineOwner = owner.getPlayer();
+            if (onlineOwner != null && !onlineOwner.getUniqueId().equals(creator.getUniqueId())) {
+                Messages.info(onlineOwner, creator.getName() + " created your mailbox area, " + clean + ".");
+            }
+        } else {
+            Messages.success(creator, "Created mailbox area " + clean + ".");
+        }
     }
 
     public void removeArea(Player player) {
-        if (areas.remove(player.getUniqueId()) == null) {
+        MailArea removed = areas.remove(player.getUniqueId());
+        if (removed == null) {
             Messages.error(player, "You do not have a mail delivery area.");
             return;
         }
+        removeMailboxSign(removed);
         save();
         Messages.success(player, "Removed your mail delivery area. Undelivered crates will return to their senders.");
     }
@@ -90,8 +143,40 @@ public final class MailService {
             Messages.error(player, "You do not have a mail delivery area.");
             return;
         }
-        Messages.info(player, "Your mail area is centered at " + area.center().x() + ", " + area.center().y()
+        Messages.info(player, "Mailbox " + area.name() + " is centered at " + area.center().x() + ", " + area.center().y()
                 + ", " + area.center().z() + " with a radius of " + deliveryRadius + " blocks.");
+    }
+
+    public boolean isMailboxSign(Block block) {
+        if (!(block.getState() instanceof Sign sign)) return false;
+        return sign.getPersistentDataContainer().has(mailboxSignKey, PersistentDataType.BYTE);
+    }
+
+    public boolean canManageMailboxSign(Player player, Block block) {
+        if (!(block.getState() instanceof Sign sign)) return true;
+        String ownerValue = sign.getPersistentDataContainer().get(mailboxOwnerKey, PersistentDataType.STRING);
+        if (ownerValue == null) return true;
+        return player.hasPermission("roadsandtransport.admin") || player.getUniqueId().toString().equals(ownerValue);
+    }
+
+    public void ensureAreaSigns() {
+        boolean changed = false;
+        for (MailArea area : new ArrayList<>(areas.values())) {
+            BlockKey existingKey = area.signBlock();
+            Location existingLocation = existingKey == null ? null : existingKey.location();
+            if (existingLocation != null && isMailboxSign(existingLocation.getBlock())) continue;
+
+            Location center = area.center().location();
+            if (center == null) continue;
+            Location replacement = findMailboxSignPlacement(center);
+            if (replacement == null) continue;
+            MailArea updated = new MailArea(area.ownerId(), area.center(), area.name(), BlockKey.of(replacement));
+            areas.put(area.ownerId(), updated);
+            String ownerName = nameOf(area.ownerId());
+            placeMailboxSign(updated, ownerName);
+            changed = true;
+        }
+        if (changed) save();
     }
 
     public void send(Player sender, OfflinePlayer recipient, boolean rush) {
@@ -351,6 +436,84 @@ public final class MailService {
             }
         }
         return total;
+    }
+
+    private Location findMailboxSignPlacement(Location center) {
+        World world = center.getWorld();
+        int baseY = center.getBlockY();
+        List<int[]> offsets = new ArrayList<>();
+        offsets.add(new int[]{0, -deliveryRadius});
+        offsets.add(new int[]{deliveryRadius, 0});
+        offsets.add(new int[]{0, deliveryRadius});
+        offsets.add(new int[]{-deliveryRadius, 0});
+        for (int dx = -deliveryRadius; dx <= deliveryRadius; dx++) {
+            for (int dz = -deliveryRadius; dz <= deliveryRadius; dz++) {
+                if (Math.max(Math.abs(dx), Math.abs(dz)) != deliveryRadius) continue;
+                if ((dx == 0 && Math.abs(dz) == deliveryRadius) || (dz == 0 && Math.abs(dx) == deliveryRadius)) continue;
+                offsets.add(new int[]{dx, dz});
+            }
+        }
+        for (int[] offset : offsets) {
+            for (int dy = -2; dy <= 2; dy++) {
+                int y = baseY + dy;
+                if (y <= world.getMinHeight() || y >= world.getMaxHeight()) continue;
+                Block place = world.getBlockAt(center.getBlockX() + offset[0], y, center.getBlockZ() + offset[1]);
+                Block floor = place.getRelative(0, -1, 0);
+                if (!place.getType().isAir() || !floor.getType().isSolid()) continue;
+                return place.getLocation();
+            }
+        }
+        return null;
+    }
+
+    private void placeMailboxSign(MailArea area, String ownerName) {
+        if (area.signBlock() == null) return;
+        Location location = area.signBlock().location();
+        if (location == null) return;
+        Block block = location.getBlock();
+        if (!block.getType().isAir() && !isMailboxSign(block)) return;
+        block.setType(Material.OAK_SIGN, false);
+        if (!(block.getState() instanceof Sign sign)) return;
+        List<String> mailboxLines = splitMailboxName(area.name());
+        var front = sign.getSide(Side.FRONT);
+        front.line(0, Component.text(ownerName + "'s", NamedTextColor.DARK_GREEN));
+        front.line(1, Component.text("Mailbox-", NamedTextColor.DARK_GREEN));
+        front.line(2, Component.text(mailboxLines.get(0), NamedTextColor.BLACK));
+        front.line(3, Component.text(mailboxLines.get(1), NamedTextColor.BLACK));
+        var back = sign.getSide(Side.BACK);
+        back.line(0, Component.text(ownerName + "'s", NamedTextColor.DARK_GREEN));
+        back.line(1, Component.text("Mailbox-", NamedTextColor.DARK_GREEN));
+        back.line(2, Component.text(mailboxLines.get(0), NamedTextColor.BLACK));
+        back.line(3, Component.text(mailboxLines.get(1), NamedTextColor.BLACK));
+        sign.getPersistentDataContainer().set(mailboxSignKey, PersistentDataType.BYTE, (byte) 1);
+        sign.getPersistentDataContainer().set(mailboxOwnerKey, PersistentDataType.STRING, area.ownerId().toString());
+        sign.setWaxed(true);
+        sign.update(true, false);
+    }
+
+    private void ensureMailboxSign(MailArea area) {
+        if (area.signBlock() == null) return;
+        String ownerName = nameOf(area.ownerId());
+        placeMailboxSign(area, ownerName);
+    }
+
+    private void removeMailboxSign(MailArea area) {
+        if (area.signBlock() == null) return;
+        Location location = area.signBlock().location();
+        if (location == null) return;
+        Block block = location.getBlock();
+        if (isMailboxSign(block)) block.setType(Material.AIR, false);
+    }
+
+    private List<String> splitMailboxName(String name) {
+        String clean = name == null ? "Mailbox" : name.trim();
+        if (clean.length() <= 16) return List.of(clean, "");
+        int split = Math.min(16, clean.length());
+        int space = clean.lastIndexOf(' ', split);
+        if (space >= 4) split = space;
+        String first = clean.substring(0, split).trim();
+        String second = clean.substring(split).trim();
+        return List.of(first, second);
     }
 
     private String readableStatus(Shipment shipment) {

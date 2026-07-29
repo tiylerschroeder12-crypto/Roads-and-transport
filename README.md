@@ -2,7 +2,7 @@
 
 **RoadsAndTransport** is a Paper 26.2 infrastructure plugin built for a civilization server. It connects roads, waypoint travel, physical mail, homes, upgraded cargo horses, and caravan trade to the physical gold economy and claims supplied by **KingdomsAndCurrency 0.1.4-alpha**.
 
-Current version: **0.1.0-alpha**
+Current version: **0.1.1-alpha**
 
 ## Requirements
 
@@ -55,7 +55,7 @@ Public waypoints remain when their original land dissolves. A qualifying new lan
 
 ### Physical mail
 
-`/createmailbox` registers a five-block delivery area centered on the player. To send a package, fill a barrel, look at it, and use:
+`/createmailbox <mailbox name>` registers a named five-block delivery area centered on the player. The plugin plants a protected sign at the edge of the area reading `<Player>'s Mailbox- <Mailbox Name>`. Administrators can create a mailbox area for an offline or absent player at the administrator's current location with `/createmailboxfor <player> <mailbox name>`, which is useful for setup and solo testing. To send a package, fill a barrel, look at it, and use:
 
 ```text
 /mail send <player>
@@ -87,11 +87,13 @@ Players may have up to two named homes:
 /deletehome <name>
 ```
 
-A home can be created in the player's own personal claim, their own political land, or unclaimed land. Creating one in unclaimed land automatically creates a free, non-expandable one-chunk personal claim tied to that home. Deleting the home releases that generated claim. Home travel is free and uses the configurable warm-up and nighttime restrictions.
+A home can be created in the player's own personal claim, their own political land, or unclaimed land. Creating one in unclaimed land automatically creates a free, non-expandable one-chunk personal claim tied to that home and reports `Home Created! One chunk claimed for saftey`. Deleting the home releases that generated claim. Home travel is free and uses the configurable warm-up and nighttime restrictions.
 
 ### Horses and caravans
 
-- Feeding a tamed horse an enchanted golden apple permanently raises its custom speed tier by one, up to tier 3.
+- Feeding a tamed horse an enchanted golden apple has a 25% chance to raise its custom speed tier by one.
+- Each horse can gain at most one successful enchanted-apple speed increase, preventing one horse from being raised directly from tier 0 to tier 3. Further tiers must come through breeding.
+- On success, the owner sees: `Your horse's eyes seem to be invigorated`.
 - Upgraded speed can be inherited by offspring. The per-parent inheritance chance is configurable and defaults to 50%.
 - Right-clicking an armored, owned horse with a chest attaches a persistent 54-slot cargo inventory.
 - Sneak-right-clicking the horse with an empty hand opens cargo.
@@ -113,7 +115,8 @@ At night, hostile mobs actively target cargo-equipped horses, even when their ca
 | `/waypoint info` | Inspect the waypoint being viewed |
 | `/waypoint access add <player>` | Authorize personal-waypoint access for 100g |
 | `/waypoint access remove <player>` | Revoke personal-waypoint access |
-| `/createmailbox` | Set the center of a mail delivery area |
+| `/createmailbox <name>` | Create and name your mail delivery area |
+| `/createmailboxfor <player> <name>` | Create a named area for another player at your location (admin) |
 | `/mailbox info` | Show mail-area information |
 | `/mailbox remove` | Remove the player's mail area |
 | `/mail send <player>` | Send a barrel after one Minecraft day |

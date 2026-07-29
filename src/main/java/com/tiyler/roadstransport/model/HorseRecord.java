@@ -8,6 +8,7 @@ public final class HorseRecord {
     private final UUID horseId;
     private UUID ownerId;
     private int speedTier;
+    private boolean enchantedAppleUpgradeApplied;
     private double baseMovementSpeed;
     private boolean cargoAttached;
     private final List<ItemStack> cargo = new ArrayList<>(Collections.nCopies(54, null));
@@ -23,6 +24,7 @@ public final class HorseRecord {
     public UUID horseId() { return horseId; }
     public UUID ownerId() { return ownerId; }
     public int speedTier() { return speedTier; }
+    public boolean enchantedAppleUpgradeApplied() { return enchantedAppleUpgradeApplied; }
     public double baseMovementSpeed() { return baseMovementSpeed; }
     public boolean cargoAttached() { return cargoAttached; }
     public List<ItemStack> cargo() { return cargo; }
@@ -33,6 +35,7 @@ public final class HorseRecord {
 
     public void ownerId(UUID ownerId) { this.ownerId = ownerId; }
     public void speedTier(int speedTier) { this.speedTier = Math.max(0, speedTier); }
+    public void enchantedAppleUpgradeApplied(boolean value) { enchantedAppleUpgradeApplied = value; }
     public void baseMovementSpeed(double baseMovementSpeed) { this.baseMovementSpeed = baseMovementSpeed; }
     public void cargoAttached(boolean cargoAttached) { this.cargoAttached = cargoAttached; }
     public void partialChunkProgress(int value) { partialChunkProgress = Math.max(0, value); }

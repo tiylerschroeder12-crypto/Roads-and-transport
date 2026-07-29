@@ -40,6 +40,11 @@ public final class MailListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
+        if (mail.isMailboxSign(event.getBlock())) {
+            event.setCancelled(true);
+            Messages.error(event.getPlayer(), "Use /mailbox remove to remove a mailbox area and its sign.");
+            return;
+        }
         if (!mail.isDeliveredCrate(event.getBlock())) return;
         if (!mail.canOpenDeliveredCrate(event.getPlayer(), event.getBlock())) {
             event.setCancelled(true);
@@ -51,12 +56,12 @@ public final class MailListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockExplosion(BlockExplodeEvent event) {
-        event.blockList().removeIf(block -> mail.isDeliveredCrate(block) || waypoints.isWaypointBlock(block));
+        event.blockList().removeIf(block -> mail.isDeliveredCrate(block) || mail.isMailboxSign(block) || waypoints.isWaypointBlock(block));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityExplosion(EntityExplodeEvent event) {
-        event.blockList().removeIf(block -> mail.isDeliveredCrate(block) || waypoints.isWaypointBlock(block));
+        event.blockList().removeIf(block -> mail.isDeliveredCrate(block) || mail.isMailboxSign(block) || waypoints.isWaypointBlock(block));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -66,14 +71,14 @@ public final class MailListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent event) {
-        if (event.getBlocks().stream().anyMatch(block -> mail.isDeliveredCrate(block) || waypoints.isWaypointBlock(block))) {
+        if (event.getBlocks().stream().anyMatch(block -> mail.isDeliveredCrate(block) || mail.isMailboxSign(block) || waypoints.isWaypointBlock(block))) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent event) {
-        if (event.getBlocks().stream().anyMatch(block -> mail.isDeliveredCrate(block) || waypoints.isWaypointBlock(block))) {
+        if (event.getBlocks().stream().anyMatch(block -> mail.isDeliveredCrate(block) || mail.isMailboxSign(block) || waypoints.isWaypointBlock(block))) {
             event.setCancelled(true);
         }
     }

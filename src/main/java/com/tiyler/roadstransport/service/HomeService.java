@@ -91,9 +91,9 @@ public final class HomeService {
         playerHomes.put(key, record);
         save();
         if (generatedClaimId == null) {
-            Messages.success(player, "Created home " + clean + ".");
+            Messages.success(player, "Home Created!");
         } else {
-            Messages.success(player, "Created home " + clean + " and claimed its single chunk for free.");
+            Messages.success(player, "Home Created! One chunk claimed for saftey");
         }
     }
 

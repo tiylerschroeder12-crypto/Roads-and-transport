@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.1-alpha
+
+- Named mailbox areas with automatically placed, protected edge signs
+- Added `/createmailboxfor <player> <mailbox name>` for administrator setup and solo testing
+- Mail-area data migration from the 0.1.0-alpha center-only format
+- Enchanted golden apples now have a 25% horse-speed success chance
+- Each horse may receive only one successful enchanted-apple speed increase
+- Updated successful horse message to `Your horse's eyes seem to be invigorated`
+- Updated free home-claim creation message to `Home Created! One chunk claimed for saftey`
+
 ## 0.1.0-alpha
 
 Initial alpha implementation:
