@@ -1,4 +1,4 @@
-# Known Limitations — 0.1.1-alpha
+# Known Limitations — 0.1.2-alpha
 
 - KingdomsAndCurrency 0.1.4-alpha does not expose a public extension API. RoadsAndTransport therefore integrates through reflection against that version's internal model and service methods. A future KingdomsAndCurrency source refactor may require a RoadsAndTransport compatibility update.
 - Free home chunks are created as synthetic personal claims. They are non-expandable through RoadsAndTransport's command guard, but KingdomsAndCurrency may still include them in displays or accounting intended for ordinary personal claims.

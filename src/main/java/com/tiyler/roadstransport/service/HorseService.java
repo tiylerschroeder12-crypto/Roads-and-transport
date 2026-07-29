@@ -173,15 +173,11 @@ public final class HorseService {
         long gold = cargoGold(record);
         int occupied = (int) record.cargo().stream().filter(item -> item != null && !item.getType().isAir()).count();
         Messages.info(player, "Horse speed tier: " + record.speedTier() + "/" + maximumTier + ".");
-        Messages.info(player, "Enchanted-apple speed increase: "
-                + (record.enchantedAppleUpgradeApplied() ? "already used" : "available") + ".");
-        Messages.info(player, "Cargo: " + (record.cargoAttached() ? occupied + "/" + cargoSlots + " slots" : "not attached") + ".");
-        Messages.info(player, "Cargo gold: " + gold + "g. Enhanced speed is " + (gold > 0 ? "suppressed" : "active") + ".");
-        if (gold >= minimumCaravanGold) {
-            int remaining = rewardEveryChunks - record.partialChunkProgress();
-            Messages.info(player, "Caravan progress: " + record.partialChunkProgress() + "/" + rewardEveryChunks
-                    + " unique chunks; " + remaining + " until the next 1g reward.");
-        }
+        Messages.info(player, "Cargo: " + occupied + "/" + cargoSlots + " slots.");
+        Messages.info(player, "Cargo gold: " + gold + "g.");
+        int remaining = rewardEveryChunks - record.partialChunkProgress();
+        Messages.info(player, "Caravan progress: " + record.partialChunkProgress() + "/" + rewardEveryChunks
+                + " unique chunks; " + remaining + " until the next 1g reward.");
     }
 
     public void trust(Player player, OfflinePlayer target, boolean add) {
@@ -281,16 +277,16 @@ public final class HorseService {
             return;
         }
         if (record.enchantedAppleUpgradeApplied()) {
-            Messages.error(player, "This horse has already gained its one enchanted-apple speed increase.");
+            Messages.error(player, "Your horse doesn't seem interested in having another apple");
             return;
         }
         if (record.speedTier() >= maximumTier) {
-            Messages.error(player, "This horse has already reached Speed " + maximumTier + ".");
+            Messages.error(player, "Your horse seems as fast as it could possibly be");
             return;
         }
         held.setAmount(held.getAmount() - 1);
         if (ThreadLocalRandom.current().nextDouble() >= enchantedAppleSuccessChance) {
-            Messages.info(player, "The enchanted golden apple has no lasting effect.");
+            Messages.info(player, "Your horse doesn't seem any different");
             return;
         }
         record.speedTier(record.speedTier() + 1);
@@ -314,7 +310,7 @@ public final class HorseService {
         record.cargoAttached(true);
         record.ownerId(player.getUniqueId());
         save();
-        Messages.success(player, "Attached a 54-slot cargo inventory to the armored horse. Sneak-right-click it with an empty hand to open cargo.");
+        Messages.success(player, "Cargo crate attached- Sneak right-click your horse with an empty hand to access your cargo");
     }
 
     private void openCargo(Player player, Horse horse, HorseRecord record) {

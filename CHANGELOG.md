@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2-alpha
+
+- Reworded home and waypoint travel countdowns for clearer cancellation instructions.
+- Reworded home deletion for generated one-chunk home claims.
+- Replaced technical horse-upgrade and cargo-attachment messages with natural wording.
+- Simplified `/horseinfo` to speed tier, cargo usage, cargo gold, and caravan progress.
+
 ## 0.1.1-alpha
 
 - Named mailbox areas with automatically placed, protected edge signs

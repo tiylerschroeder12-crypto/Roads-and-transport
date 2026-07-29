@@ -107,7 +107,9 @@ public final class HomeService {
         if (record.generatedClaimId() != null) kingdoms.removeClaim(record.generatedClaimId());
         if (playerHomes.isEmpty()) homes.remove(player.getUniqueId());
         save();
-        Messages.success(player, "Deleted home " + record.name() + (record.generatedClaimId() == null ? "." : " and released its free chunk."));
+        Messages.success(player, record.generatedClaimId() == null
+                ? "Deleted " + record.name() + "."
+                : "Deleted " + record.name() + ", your claim has been removed.");
     }
 
     public void travel(Player player, String name) {
@@ -154,7 +156,7 @@ public final class HomeService {
                 return;
             }
             player.sendActionBar(Component.text("Returning to " + record.name() + " in " + remaining[0]
-                    + " seconds — move, sneak, attack, or take damage to cancel.", NamedTextColor.AQUA));
+                    + " seconds — Move or sneak to cancel. Teleport will be canceled if damage is taken.", NamedTextColor.AQUA));
             remaining[0]--;
         }, 0L, 20L);
         sessions.put(player.getUniqueId(), new TravelSession(player.getUniqueId(), null, origin, 0,

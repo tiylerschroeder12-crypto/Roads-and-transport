@@ -443,7 +443,7 @@ public final class WaypointService {
                 return;
             }
             player.sendActionBar(Component.text("Travelling to " + destination.name() + " in " + remaining[0]
-                    + " seconds — move, sneak, attack, or take damage to cancel.", NamedTextColor.AQUA));
+                    + " seconds — Move or sneak to cancel. Teleport will be canceled if damage is taken.", NamedTextColor.AQUA));
             remaining[0]--;
         }, 0L, 20L);
         sessions.put(player.getUniqueId(), new TravelSession(player.getUniqueId(), destination.id(), origin, fare,
