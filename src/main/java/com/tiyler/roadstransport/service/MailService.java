@@ -229,7 +229,7 @@ public final class MailService {
                 sender.getName(), kingdoms.realmName(sender.getUniqueId()), now,
                 rush ? now : now + normalDelayMillis, rush, ShipmentStatus.IN_TRANSIT, blockData, contents);
         shipments.put(shipment.id(), shipment);
-        barrel.getInventory().clear();
+        barrel.getSnapshotInventory().clear();
         barrel.update(true, false);
         block.setType(Material.AIR, false);
         save();
