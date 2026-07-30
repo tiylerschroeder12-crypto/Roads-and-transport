@@ -2,7 +2,7 @@
 
 **RoadsAndTransport** is a Paper 26.2 infrastructure plugin built for a civilization server. It connects roads, waypoint travel, physical mail, homes, upgraded cargo horses, and caravan trade to the physical gold economy and claims supplied by **KingdomsAndCurrency 0.1.4-alpha**.
 
-Current version: **0.1.2-alpha**
+Current version: **0.1.4-alpha**
 
 ## Requirements
 
@@ -55,7 +55,7 @@ Public waypoints remain when their original land dissolves. A qualifying new lan
 
 ### Physical mail
 
-`/createmailbox <mailbox name>` registers a named five-block delivery area centered on the player. The plugin plants a protected sign at the edge of the area reading `<Player>'s Mailbox- <Mailbox Name>`. Administrators can create a mailbox area for an offline or absent player at the administrator's current location with `/createmailboxfor <player> <mailbox name>`, which is useful for setup and solo testing. To send a package, fill a barrel, look at it, and use:
+`/mailbox create <mailbox name>` registers a named five-block delivery area centered on the player. The plugin plants a protected sign at the edge of the area reading `<Player>'s Mailbox- <Mailbox Name>`. Administrators can create a mailbox area for an offline or absent player at the administrator's current location with `/createmailboxfor <player> <mailbox name>`, which is useful for setup and solo testing. To send a package, fill a barrel, look at it, and use:
 
 ```text
 /mail send <player>
@@ -84,10 +84,10 @@ Players may have up to two named homes:
 ```text
 /createhome <name>
 /home <name>
-/deletehome <name>
+/delhome <name>
 ```
 
-A home can be created in the player's own personal claim, their own political land, or unclaimed land. Creating one in unclaimed land automatically creates a free, non-expandable one-chunk personal claim tied to that home and reports `Home Created! One chunk claimed for saftey`. Deleting the home releases that generated claim. Home travel is free and uses the configurable warm-up and nighttime restrictions.
+A home can be created in the player's own personal claim, their own political land, or unclaimed land. Creating one in unclaimed land automatically creates a free, non-expandable one-chunk personal claim tied to that home and reports `Home Created! One chunk claimed for safety`. Deleting the home releases that generated claim. Home travel is free and uses the configurable warm-up and nighttime restrictions.
 
 ### Horses and caravans
 
@@ -100,7 +100,7 @@ A home can be created in the player's own personal claim, their own political la
 - Cargo access is limited to the owner, explicitly trusted players, and administrators.
 - `/horseinfo`, `/horsetrust <player>`, and `/horseuntrust <player>` manage and inspect cargo horses.
 
-Any physical gold in cargo temporarily suppresses the horse's custom speed bonus. A cargo horse carrying at least 9g earns 1g for every four newly visited chunks during that active shipment. Each chunk counts once until all gold is unloaded, at which point the route history resets. Only legitimate adjacent movement while ridden or led counts; teleports and unexplained chunk jumps do not.
+A cargo horse carrying at least 9g temporarily loses its custom speed bonus and earns 1g for every four newly visited chunks during that active shipment. Each chunk counts once until all gold is unloaded, at which point the route history resets. Only legitimate adjacent movement while ridden or led counts; teleports and unexplained chunk jumps do not.
 
 At night, hostile mobs actively target cargo-equipped horses, even when their cargo is empty. Cargo and the attached chest drop if the horse dies.
 
@@ -110,21 +110,21 @@ At night, hostile mobs actively target cargo-equipped horses, even when their ca
 |---|---|
 | `/createwaypoint public <name>` | Create a named public waypoint |
 | `/createwaypoint personal` | Create a personal waypoint |
-| `/waypoint remove` | Remove the waypoint being viewed |
+| `/delwaypoint` | Remove the waypoint being viewed |
 | `/waypoint adopt` | Adopt an orphaned public waypoint |
 | `/waypoint info` | Inspect the waypoint being viewed |
 | `/waypoint access add <player>` | Authorize personal-waypoint access for 100g |
 | `/waypoint access remove <player>` | Revoke personal-waypoint access |
-| `/createmailbox <name>` | Create and name your mail delivery area |
+| `/mailbox create <name>` | Create and name your mail delivery area |
 | `/createmailboxfor <player> <name>` | Create a named area for another player at your location (admin) |
 | `/mailbox info` | Show mail-area information |
-| `/mailbox remove` | Remove the player's mail area |
+| `/delmailbox` | Remove the player's mail area |
 | `/mail send <player>` | Send a barrel after one Minecraft day |
 | `/mail rush send <player>` | Send a barrel immediately at rush pricing |
 | `/mail status` | Show recent shipments |
 | `/createhome <name>` | Create a named home |
 | `/home <name>` | Return to a named home |
-| `/deletehome <name>` | Delete a home and its generated claim |
+| `/delhome <name>` | Delete a home and its generated claim |
 | `/horseinfo` | Inspect the targeted horse |
 | `/horsetrust <player>` | Grant cargo access |
 | `/horseuntrust <player>` | Revoke cargo access |

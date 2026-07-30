@@ -42,7 +42,7 @@ public final class MailListener implements Listener {
     public void onBreak(BlockBreakEvent event) {
         if (mail.isMailboxSign(event.getBlock())) {
             event.setCancelled(true);
-            Messages.error(event.getPlayer(), "Use /mailbox remove to remove a mailbox area and its sign.");
+            Messages.error(event.getPlayer(), "Use /delmailbox to remove a mailbox area and its sign.");
             return;
         }
         if (!mail.isDeliveredCrate(event.getBlock())) return;

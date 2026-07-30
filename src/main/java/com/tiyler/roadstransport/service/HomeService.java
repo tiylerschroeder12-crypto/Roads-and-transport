@@ -93,7 +93,7 @@ public final class HomeService {
         if (generatedClaimId == null) {
             Messages.success(player, "Home Created!");
         } else {
-            Messages.success(player, "Home Created! One chunk claimed for saftey");
+            Messages.success(player, "Home Created! One chunk claimed for safety");
         }
     }
 

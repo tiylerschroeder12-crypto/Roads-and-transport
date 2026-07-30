@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.4-alpha
+
+- Replaced `/createmailbox` with `/mailbox create <name>`.
+- Standardized player-facing deletion commands as `/delmailbox`, `/delwaypoint`, and `/delhome <name>`.
+- Updated protected-block guidance and command help to use the new deletion commands.
+- Corrected the free-home message to `Home Created! One chunk claimed for safety`.
+- Changed caravan speed suppression so it begins only when cargo contains at least 9g.
+- Prevented horse teleports and portal travel from marking destination chunks as visited caravan territory.
+
+## 0.1.3-alpha
+
+- Fixed physical mail crates arriving without the items stored in the sent barrel.
+- Added automatic restoration for unopened delivered crates affected by the empty-crate bug when their shipment data still contains the original items.
+
 ## 0.1.2-alpha
 
 - Reworded home and waypoint travel countdowns for clearer cancellation instructions.

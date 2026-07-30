@@ -13,20 +13,24 @@ commands:
     permission: roadsandtransport.use
   waypoint:
     description: Manage and inspect waypoints.
-    usage: /waypoint <remove|adopt|access|info>
+    usage: /waypoint <adopt|access|info>
     permission: roadsandtransport.use
-  createmailbox:
-    description: Create and name your five-block mail delivery area.
-    usage: /createmailbox <mailbox name>
+  delwaypoint:
+    description: Remove the waypoint you are looking at and collect its legitimate refund.
+    usage: /delwaypoint
+    permission: roadsandtransport.use
+  mailbox:
+    description: Create or inspect your five-block mail delivery area.
+    usage: /mailbox <create <mailbox name>|info>
+    permission: roadsandtransport.use
+  delmailbox:
+    description: Remove your mail delivery area.
+    usage: /delmailbox
     permission: roadsandtransport.use
   createmailboxfor:
     description: Create a named mail delivery area for another player at your location.
     usage: /createmailboxfor <player> <mailbox name>
     permission: roadsandtransport.admin
-  mailbox:
-    description: Manage your mail delivery area.
-    usage: /mailbox <remove|info>
-    permission: roadsandtransport.use
   mail:
     description: Send barrels as physical mail crates or check shipment status.
     usage: /mail <send <player>|rush send <player>|status>
@@ -39,9 +43,9 @@ commands:
     description: Teleport to a named home.
     usage: /home <home name>
     permission: roadsandtransport.use
-  deletehome:
+  delhome:
     description: Delete a named home and its free home claim, if any.
-    usage: /deletehome <home name>
+    usage: /delhome <home name>
     permission: roadsandtransport.use
   horseinfo:
     description: Inspect the horse you are looking at.

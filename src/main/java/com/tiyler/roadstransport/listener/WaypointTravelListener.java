@@ -44,7 +44,7 @@ public final class WaypointTravelListener implements Listener {
         Block block = event.getBlock();
         if (!waypoints.isWaypointBlock(block)) return;
         event.setCancelled(true);
-        Messages.error(event.getPlayer(), "Use /waypoint remove while looking at this waypoint before breaking the copper block.");
+        Messages.error(event.getPlayer(), "Use /delwaypoint while looking at this waypoint before breaking the copper block.");
     }
 
     @EventHandler(ignoreCancelled = true)

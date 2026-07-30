@@ -130,8 +130,8 @@ public final class HorseService {
         }
         ChunkKey key = ChunkKey.of(destination);
         lastChunks.put(horse.getUniqueId(), key);
-        HorseRecord record = horses.get(horse.getUniqueId());
-        if (record != null && cargoGold(record) > 0) record.visitedChunks().add(key);
+        // Teleports and portals never count toward caravan progress. Updating only the
+        // last-known chunk prevents the next normal movement scan from treating the jump as travel.
     }
 
     public void handleInventoryClose(InventoryCloseEvent event) {
@@ -405,7 +405,7 @@ public final class HorseService {
     private void applySpeed(Horse horse, HorseRecord record) {
         AttributeInstance attribute = horse.getAttribute(Attribute.MOVEMENT_SPEED);
         if (attribute == null || record.baseMovementSpeed() <= 0) return;
-        double target = cargoGold(record) > 0
+        double target = cargoGold(record) >= minimumCaravanGold
                 ? record.baseMovementSpeed()
                 : record.baseMovementSpeed() * (1.0 + multiplierPerTier * record.speedTier());
         if (Math.abs(attribute.getBaseValue() - target) > 0.000001) attribute.setBaseValue(target);

@@ -39,8 +39,8 @@ public final class RoadsAndTransportPlugin extends JavaPlugin {
 
         TransportCommandExecutor commands = new TransportCommandExecutor(this, kingdoms, waypoints, mail, homes, horses);
         for (String commandName : List.of(
-                "createwaypoint", "waypoint", "createmailbox", "createmailboxfor", "mailbox", "mail",
-                "createhome", "home", "deletehome", "horseinfo", "horsetrust", "horseuntrust", "rat"
+                "createwaypoint", "waypoint", "delwaypoint", "mailbox", "delmailbox", "createmailboxfor", "mail",
+                "createhome", "home", "delhome", "horseinfo", "horsetrust", "horseuntrust", "rat"
         )) {
             PluginCommand command = getCommand(commandName);
             if (command == null) {

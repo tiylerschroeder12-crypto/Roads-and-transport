@@ -337,6 +337,7 @@ public final class MailService {
     public void ensureLabels() {
         for (Shipment shipment : shipments.values()) {
             if (shipment.deliveredBlock() != null && deliveredByBlock.containsKey(shipment.deliveredBlock())) {
+                restoreMissingDeliveredContents(shipment);
                 ensureLabel(shipment);
             }
         }
@@ -364,8 +365,21 @@ public final class MailService {
             block.setType(Material.AIR, false);
             return false;
         }
-        barrel.getInventory().setContents(normalizeBarrelContents(shipment.contents()));
-        barrel.update(true, false);
+        ItemStack[] deliveredContents = normalizeBarrelContents(shipment.contents());
+        // Container BlockStates are snapshots. Populate the snapshot first, then apply it to the world.
+        // Writing to the live inventory and calling update() afterwards can overwrite it with the
+        // empty captured snapshot, which was causing delivered barrels to arrive without their items.
+        barrel.getSnapshotInventory().setContents(cloneContents(deliveredContents));
+        if (!barrel.update(true, false)) {
+            block.setType(Material.AIR, false);
+            return false;
+        }
+        // Reapply to the live inventory as a defensive Paper compatibility check.
+        if (!(block.getState() instanceof Barrel placedBarrel)) {
+            block.setType(Material.AIR, false);
+            return false;
+        }
+        placedBarrel.getInventory().setContents(cloneContents(deliveredContents));
         BlockKey key = BlockKey.of(block);
         shipment.deliveredBlock(key);
         shipment.status(ShipmentStatus.DELIVERED);
@@ -379,6 +393,26 @@ public final class MailService {
             Messages.success(online, returning ? "A returned mail crate has arrived." : "Mail has arrived in your delivery area.");
         }
         return true;
+    }
+
+    private void restoreMissingDeliveredContents(Shipment shipment) {
+        BlockKey key = shipment.deliveredBlock();
+        Location location = key == null ? null : key.location();
+        if (location == null || !(location.getBlock().getState() instanceof Barrel barrel)) return;
+        if (!barrel.getInventory().isEmpty()) return;
+        ItemStack[] expected = normalizeBarrelContents(shipment.contents());
+        boolean hasExpectedItems = Arrays.stream(expected).anyMatch(item -> item != null && !item.getType().isAir());
+        if (!hasExpectedItems) return;
+        barrel.getInventory().setContents(cloneContents(expected));
+        plugin.getLogger().info("Restored missing contents for delivered mail shipment " + shipment.id() + ".");
+    }
+
+    private ItemStack[] cloneContents(ItemStack[] source) {
+        ItemStack[] copy = new ItemStack[source.length];
+        for (int i = 0; i < source.length; i++) {
+            copy[i] = source[i] == null ? null : source[i].clone();
+        }
+        return copy;
     }
 
     private void ensureLabel(Shipment shipment) {

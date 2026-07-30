@@ -21,6 +21,6 @@ public final class HomeClaimListener implements Listener {
         if (!(lower.startsWith("/claim ") || lower.startsWith("/dissolve "))) return;
         if (!homes.isManagedClaimName(message)) return;
         event.setCancelled(true);
-        Messages.error(event.getPlayer(), "That one-chunk claim is tied to a home. Use /deletehome <name> instead.");
+        Messages.error(event.getPlayer(), "That one-chunk claim is tied to a home. Use /delhome <name> instead.");
     }
 }

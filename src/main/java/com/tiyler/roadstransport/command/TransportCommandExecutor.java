@@ -44,9 +44,10 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
         switch (command.getName().toLowerCase(Locale.ROOT)) {
             case "createwaypoint" -> createWaypoint((Player) sender, args);
             case "waypoint" -> waypoint((Player) sender, args);
-            case "createmailbox" -> createMailbox((Player) sender, args);
-            case "createmailboxfor" -> createMailboxFor((Player) sender, args);
+            case "delwaypoint" -> waypoints.removeLooking((Player) sender);
             case "mailbox" -> mailbox((Player) sender, args);
+            case "delmailbox" -> mail.removeArea((Player) sender);
+            case "createmailboxfor" -> createMailboxFor((Player) sender, args);
             case "mail" -> mail((Player) sender, args);
             case "createhome" -> {
                 if (args.length == 0) Messages.error(sender, "Usage: /createhome <home name>");
@@ -61,8 +62,8 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
                     homes.travel((Player) sender, join(args, 0));
                 }
             }
-            case "deletehome" -> {
-                if (args.length == 0) Messages.error(sender, "Usage: /deletehome <home name>");
+            case "delhome" -> {
+                if (args.length == 0) Messages.error(sender, "Usage: /delhome <home name>");
                 else homes.delete((Player) sender, join(args, 0));
             }
             case "horseinfo" -> horses.inspect((Player) sender);
@@ -92,11 +93,10 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
 
     private void waypoint(Player player, String[] args) {
         if (args.length == 0) {
-            Messages.error(player, "Usage: /waypoint <remove|adopt|info|access add/remove <player>>");
+            Messages.error(player, "Usage: /waypoint <adopt|info|access add/remove <player>>");
             return;
         }
         switch (args[0].toLowerCase(Locale.ROOT)) {
-            case "remove" -> waypoints.removeLooking(player);
             case "adopt" -> waypoints.adoptLooking(player);
             case "info" -> waypoints.infoLooking(player);
             case "access" -> {
@@ -111,16 +111,8 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
                 }
                 waypoints.access(player, args[1].equalsIgnoreCase("add"), target);
             }
-            default -> Messages.error(player, "Usage: /waypoint <remove|adopt|info|access add/remove <player>>");
+            default -> Messages.error(player, "Usage: /waypoint <adopt|info|access add/remove <player>>");
         }
-    }
-
-    private void createMailbox(Player player, String[] args) {
-        if (args.length == 0) {
-            Messages.error(player, "Usage: /createmailbox <mailbox name>");
-            return;
-        }
-        mail.createArea(player, join(args, 0));
     }
 
     private void createMailboxFor(Player player, String[] args) {
@@ -139,11 +131,17 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
     private void mailbox(Player player, String[] args) {
         if (args.length == 0 || args[0].equalsIgnoreCase("info")) {
             mail.areaInfo(player);
-        } else if (args[0].equalsIgnoreCase("remove")) {
-            mail.removeArea(player);
-        } else {
-            Messages.error(player, "Usage: /mailbox <remove|info>");
+            return;
         }
+        if (args[0].equalsIgnoreCase("create")) {
+            if (args.length < 2) {
+                Messages.error(player, "Usage: /mailbox create <mailbox name>");
+                return;
+            }
+            mail.createArea(player, join(args, 1));
+            return;
+        }
+        Messages.error(player, "Usage: /mailbox <create <mailbox name>|info>");
     }
 
     private void mail(Player player, String[] args) {
@@ -182,10 +180,10 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
         switch (sub) {
             case "help" -> {
                 Messages.info(sender, "RoadsAndTransport commands:");
-                Messages.info(sender, "/createwaypoint public <name>, /createwaypoint personal, /waypoint <remove|adopt|info|access>");
-                Messages.info(sender, "/createmailbox <name>, /createmailboxfor <player> <name>, /mailbox <remove|info>");
+                Messages.info(sender, "/createwaypoint public <name>, /createwaypoint personal, /waypoint <adopt|info|access>, /delwaypoint");
+                Messages.info(sender, "/mailbox create <name>, /mailbox info, /delmailbox, /createmailboxfor <player> <name>");
                 Messages.info(sender, "/mail <send|rush send|status>");
-                Messages.info(sender, "/createhome <name>, /home <name>, /deletehome <name>");
+                Messages.info(sender, "/createhome <name>, /home <name>, /delhome <name>");
                 Messages.info(sender, "/horseinfo, /horsetrust <player>, /horseuntrust <player>");
             }
             case "save" -> {
@@ -219,13 +217,13 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
         String name = command.getName().toLowerCase(Locale.ROOT);
         if (name.equals("createwaypoint") && args.length == 1) values.addAll(List.of("public", "personal"));
         if (name.equals("waypoint")) {
-            if (args.length == 1) values.addAll(List.of("remove", "adopt", "info", "access"));
+            if (args.length == 1) values.addAll(List.of("adopt", "info", "access"));
             else if (args.length == 2 && args[0].equalsIgnoreCase("access")) values.addAll(List.of("add", "remove"));
         }
         if (name.equals("createmailboxfor") && args.length == 1) {
             values.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
         }
-        if (name.equals("mailbox") && args.length == 1) values.addAll(List.of("remove", "info"));
+        if (name.equals("mailbox") && args.length == 1) values.addAll(List.of("create", "info"));
         if (name.equals("mail")) {
             if (args.length == 1) values.addAll(List.of("send", "rush", "status"));
             else if (args.length == 2 && args[0].equalsIgnoreCase("rush")) values.add("send");
