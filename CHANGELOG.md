@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.6.1-alpha
+
+- Added an inert compatibility shim for stale `HomeClaimListener.java` files left behind when a repository is updated by overlaying the 0.1.6 source tree instead of deleting removed files.
+- Fixes the GitHub Actions compile error for `HomeService.isManagedClaimName(String)` without restoring any Home claim behavior.
+- Homes remain pure teleport anchors; the obsolete listener always receives `false` from the compatibility method.
+
 ## 0.1.6-alpha
 
 - Redesigned Homes as named teleport points rather than synthetic one-chunk claims.

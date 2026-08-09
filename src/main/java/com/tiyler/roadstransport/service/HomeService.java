@@ -123,6 +123,18 @@ public final class HomeService {
                 System.currentTimeMillis(), taskId, "home"));
     }
 
+    /**
+     * Compatibility shim for 0.1.5-era HomeClaimListener source files that may remain
+     * in repositories updated by overlaying the 0.1.6 source tree. Homes are no longer
+     * managed claims, so this always returns false and keeps that obsolete listener inert.
+     *
+     * @deprecated Homes have been pure teleport anchors since 0.1.6-alpha.
+     */
+    @Deprecated(forRemoval = true)
+    public boolean isManagedClaimName(String ignoredCommand) {
+        return false;
+    }
+
     public boolean hasSession(UUID playerId) { return sessions.containsKey(playerId); }
 
     public Location sessionOrigin(UUID playerId) {

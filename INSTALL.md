@@ -12,7 +12,7 @@ This source project includes `.github/workflows/build.yml`.
 6. Open **Build RoadsAndTransport**.
 7. Wait for the build to complete.
 8. Download the `RoadsAndTransport-JAR` artifact.
-9. Extract the artifact to obtain `RoadsAndTransport-0.1.6-alpha.jar`.
+9. Extract the artifact to obtain `RoadsAndTransport-0.1.6.1-alpha.jar`.
 
 The workflow installs Temurin Java 25 and Gradle 9.6.1, runs `gradle clean build`, and uploads the built JAR.
 
@@ -20,7 +20,7 @@ The workflow installs Temurin Java 25 and Gradle 9.6.1, runs `gradle clean build
 
 1. Stop the Paper server completely.
 2. Confirm that `KingdomsAndCurrency-0.1.5-alpha.jar` is installed and working.
-3. Place `RoadsAndTransport-0.1.6-alpha.jar` in the server's `plugins` folder.
+3. Place `RoadsAndTransport-0.1.6.1-alpha.jar` in the server's `plugins` folder.
 4. Remove older RoadsAndTransport JARs so only one version is present.
 5. Start the server.
 6. Confirm that both plugins enable without errors.
