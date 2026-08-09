@@ -7,10 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,8 +19,6 @@ public final class KingdomsBridge {
     private final Object claimService;
     private final Object currencyService;
     private final Class<?> claimClass;
-    private final Class<?> claimTypeClass;
-    private final Class<?> chunkPosClass;
 
     public KingdomsBridge(JavaPlugin owner) throws ReflectiveOperationException {
         this.owner = owner;
@@ -37,8 +33,6 @@ public final class KingdomsBridge {
         currencyService = currencyField.get(kingdoms);
         ClassLoader loader = kingdoms.getClass().getClassLoader();
         claimClass = Class.forName("com.tiyler.kingdoms.model.Claim", true, loader);
-        claimTypeClass = Class.forName("com.tiyler.kingdoms.model.ClaimType", true, loader);
-        chunkPosClass = Class.forName("com.tiyler.kingdoms.model.ChunkPos", true, loader);
     }
 
     public boolean withdrawPurse(UUID playerId, long amount) {
@@ -183,41 +177,17 @@ public final class KingdomsBridge {
         }
     }
 
-    public UUID createHomeClaim(Player player, Location location, String homeName) {
-        try {
-            UUID id = UUID.randomUUID();
-            @SuppressWarnings({"rawtypes", "unchecked"})
-            Object personal = Enum.valueOf((Class<? extends Enum>) claimTypeClass.asSubclass(Enum.class), "PERSONAL");
-            Constructor<?> constructor = claimClass.getConstructor(UUID.class, String.class, claimTypeClass, UUID.class);
-            Object claim = constructor.newInstance(id, "Home - " + player.getName() + " - " + homeName, personal, player.getUniqueId());
-            Method of = chunkPosClass.getMethod("of", Location.class);
-            Object chunkPos = of.invoke(null, location);
-            Object chunks = invoke(claim, "chunks");
-            if (!(chunks instanceof Collection collection)) throw new IllegalStateException("Claim chunks is not a collection");
-            collection.add(chunkPos);
-            invoke(gameData, "addClaim", new Class[]{claimClass}, claim);
-            return id;
-        } catch (ReflectiveOperationException ex) {
-            fail("create home claim", ex);
-            return null;
-        }
-    }
-
     public boolean removeClaim(UUID claimId) {
-        Object claim = claim(claimId);
-        if (claim == null) return false;
+        if (claimId == null) return true;
         try {
+            Object claim = invoke(gameData, "claim", new Class[]{UUID.class}, claimId);
+            if (claim == null) return true;
             invoke(gameData, "removeClaim", new Class[]{claimClass}, claim);
             return true;
         } catch (ReflectiveOperationException ex) {
-            fail("remove home claim", ex);
+            fail("remove legacy home claim", ex);
             return false;
         }
-    }
-
-    public boolean claimStillOwnedBy(UUID claimId, UUID ownerId) {
-        Object claim = claim(claimId);
-        return claim != null && ownerId.equals(claimOwner(claim));
     }
 
     public OfflinePlayer offlinePlayer(String name) {

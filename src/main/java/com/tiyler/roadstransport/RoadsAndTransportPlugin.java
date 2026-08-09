@@ -22,6 +22,7 @@ public final class RoadsAndTransportPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        migrateConfig();
         try {
             kingdoms = new KingdomsBridge(this);
         } catch (Exception ex) {
@@ -55,7 +56,6 @@ public final class RoadsAndTransportPlugin extends JavaPlugin {
         manager.registerEvents(new WaypointTravelListener(waypoints, homes), this);
         manager.registerEvents(new MailListener(mail, waypoints), this);
         manager.registerEvents(new HorseListener(horses), this);
-        manager.registerEvents(new HomeClaimListener(homes), this);
 
         long roadInterval = Math.max(1L, getConfig().getLong("roads.check-interval-ticks", 5L));
         Bukkit.getScheduler().runTaskTimer(this, roads, 1L, roadInterval);
@@ -79,6 +79,33 @@ public final class RoadsAndTransportPlugin extends JavaPlugin {
 
         getLogger().info("RoadsAndTransport " + getPluginMeta().getVersion() + " enabled with "
                 + waypoints.all().size() + " waypoints.");
+    }
+
+    private void migrateConfig() {
+        boolean changed = false;
+        if (getConfig().getBoolean("homes.blocked-at-night", true)) {
+            getConfig().set("homes.blocked-at-night", false);
+            changed = true;
+        }
+        // 0.1.5 shipped with a two-home default. Homes are pure teleport anchors now,
+        // so migrate that old default to the new four-home limit. Other custom values remain intact.
+        if (getConfig().getInt("homes.maximum", 2) == 2) {
+            getConfig().set("homes.maximum", 4);
+            changed = true;
+        }
+        if (!getConfig().isSet("horses.maximum-linked-horses")) {
+            getConfig().set("horses.maximum-linked-horses", 4);
+            changed = true;
+        }
+        if (!getConfig().isSet("horses.speed-penalty-per-additional-horse")) {
+            getConfig().set("horses.speed-penalty-per-additional-horse", 0.10);
+            changed = true;
+        }
+        if (!getConfig().isSet("horses.minimum-caravan-speed-multiplier")) {
+            getConfig().set("horses.minimum-caravan-speed-multiplier", 0.55);
+            changed = true;
+        }
+        if (changed) saveConfig();
     }
 
     @Override

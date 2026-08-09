@@ -1,14 +1,14 @@
 # RoadsAndTransport
 
-**RoadsAndTransport** is a Paper 26.2 infrastructure plugin built for a civilization server. It connects roads, waypoint travel, physical mail, homes, upgraded cargo horses, and caravan trade to the physical gold economy and claims supplied by **KingdomsAndCurrency 0.1.4-alpha**.
+**RoadsAndTransport** is a Paper 26.2 infrastructure plugin built for a civilization server. It connects roads, waypoint travel, physical mail, homes, upgraded cargo horses, and caravan trade to the physical gold economy and claims supplied by **KingdomsAndCurrency 0.1.5-alpha**.
 
-Current version: **0.1.4-alpha**
+Current version: **0.1.6-alpha**
 
 ## Requirements
 
 - Paper `26.2`
 - Java `25`
-- KingdomsAndCurrency `0.1.4-alpha`
+- KingdomsAndCurrency `0.1.5-alpha`
 
 RoadsAndTransport has a hard dependency on KingdomsAndCurrency and will disable itself if that plugin is missing or unavailable.
 
@@ -79,7 +79,7 @@ Delivered crates are protected from unauthorized opening, breaking, hoppers, pis
 
 ### Homes
 
-Players may have up to two named homes:
+Players may have up to four named home teleport points:
 
 ```text
 /createhome <name>
@@ -87,7 +87,9 @@ Players may have up to two named homes:
 /delhome <name>
 ```
 
-A home can be created in the player's own personal claim, their own political land, or unclaimed land. Creating one in unclaimed land automatically creates a free, non-expandable one-chunk personal claim tied to that home and reports `Home Created! One chunk claimed for safety`. Deleting the home releases that generated claim. Home travel is free and uses the configurable warm-up and nighttime restrictions.
+Homes are saved destinations only. Creating a home records the player's current block as a return point; it does not create, expand, reserve, or protect a KingdomsAndCurrency claim. Home travel is free, uses the configurable warm-up, and remains available during both day and night. A home remains usable if the surrounding land later changes ownership because the home is not a land claim. `/delhome <name>` removes only the teleport point. Public waypoints still close at night.
+
+When upgrading from 0.1.5-alpha or older, RoadsAndTransport automatically removes the synthetic one-chunk claims it previously created for homes in unclaimed land while preserving the home teleport points themselves. Ordinary KingdomsAndCurrency claims are not touched.
 
 ### Horses and caravans
 
@@ -98,9 +100,13 @@ A home can be created in the player's own personal claim, their own political la
 - Right-clicking an armored, owned horse with a chest attaches a persistent 54-slot cargo inventory.
 - Sneak-right-clicking the horse with an empty hand opens cargo.
 - Cargo access is limited to the owner, explicitly trusted players, and administrators.
+- Cargo horses may be chained together with ordinary leads. Leash the first cargo horse to yourself, then leash another owned cargo horse while standing near the first; the new horse is attached to the tail of the caravan.
+- A caravan may contain at most four horses total. Attempting to add a fifth reports `The caravan cannot lead any more horses`.
+- The lead horse supplies the original 54 cargo slots. Each follower adds one chest-sized 27-slot page to the lead horse's paginated caravan cargo menu, for a maximum accessible capacity of 135 slots.
+- Every additional linked horse applies a configurable speed penalty. The default is 10% per follower, so a four-horse caravan travels 30% slower before other speed rules are applied.
 - `/horseinfo`, `/horsetrust <player>`, and `/horseuntrust <player>` manage and inspect cargo horses.
 
-A cargo horse carrying at least 9g temporarily loses its custom speed bonus and earns 1g for every four newly visited chunks during that active shipment. Each chunk counts once until all gold is unloaded, at which point the route history resets. Only legitimate adjacent movement while ridden or led counts; teleports and unexplained chunk jumps do not.
+A caravan carrying at least 9g temporarily loses its custom speed bonus and earns 1g for every four newly visited chunks during that active shipment. Gold carried by any linked horse counts toward the caravan. Each chunk counts once until all gold is unloaded, at which point the route history resets. Only legitimate adjacent movement by the lead horse while ridden or led counts; teleports and unexplained chunk jumps do not.
 
 At night, hostile mobs actively target cargo-equipped horses, even when their cargo is empty. Cargo and the attached chest drop if the horse dies.
 
@@ -124,7 +130,7 @@ At night, hostile mobs actively target cargo-equipped horses, even when their ca
 | `/mail status` | Show recent shipments |
 | `/createhome <name>` | Create a named home |
 | `/home <name>` | Return to a named home |
-| `/delhome <name>` | Delete a home and its generated claim |
+| `/delhome <name>` | Delete a saved home teleport point |
 | `/horseinfo` | Inspect the targeted horse |
 | `/horsetrust <player>` | Grant cargo access |
 | `/horseuntrust <player>` | Revoke cargo access |

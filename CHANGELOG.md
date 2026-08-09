@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.6-alpha
+
+- Redesigned Homes as named teleport points rather than synthetic one-chunk claims.
+- Increased the default and migrated Home limit from two to four per player.
+- `/createhome <name>` no longer creates or requires land ownership and now reports simply `Home Created!`.
+- `/delhome <name>` removes only the saved teleport point.
+- Home travel no longer becomes invalid when the destination's claim ownership changes.
+- Removed the generated-home-claim command guard and therefore the home-specific claim enter/leave message spam.
+- Added one-time migration of legacy generated Home claims from 0.1.5-alpha and older; saved Home destinations are retained.
+- Existing custom `homes.maximum` values are preserved except the old default value of 2, which migrates to 4.
+
+## 0.1.5-alpha
+
+- Homes can now be used at night; only public waypoint travel remains closed until dawn.
+- Added horse-to-horse lead chains for cargo caravans.
+- Caravans support a maximum of four linked horses total.
+- Attempting to add a fifth horse now displays `The caravan cannot lead any more horses`.
+- The lead cargo horse keeps its 54-slot storage and each linked follower adds one chest-sized 27-slot cargo page.
+- Added a paginated caravan cargo interface with two base pages plus one page per follower.
+- Added a configurable 10% speed penalty per additional linked horse by default.
+- Caravan gold, speed suppression, and unique-chunk rewards now use the linked caravan as a whole.
+
 ## 0.1.4-alpha
 
 - Replaced `/createmailbox` with `/mailbox create <name>`.

@@ -25,9 +25,9 @@ waypoints:
   night-end: 23850
 
 homes:
-  maximum: 2
+  maximum: 4
   warmup-seconds: 10
-  blocked-at-night: true
+  blocked-at-night: false
   safe-radius: 3
 
 mail:
@@ -40,6 +40,9 @@ mail:
 
 horses:
   cargo-slots: 54
+  maximum-linked-horses: 4
+  speed-penalty-per-additional-horse: 0.10
+  minimum-caravan-speed-multiplier: 0.55
   maximum-speed-tier: 3
   speed-multiplier-per-tier: 0.15
   inheritance-chance-per-parent: 0.50

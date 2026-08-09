@@ -36,7 +36,7 @@ commands:
     usage: /mail <send <player>|rush send <player>|status>
     permission: roadsandtransport.use
   createhome:
-    description: Create one of your two named homes.
+    description: Create one of your four named home teleport points.
     usage: /createhome <home name>
     permission: roadsandtransport.use
   home:
@@ -44,7 +44,7 @@ commands:
     usage: /home <home name>
     permission: roadsandtransport.use
   delhome:
-    description: Delete a named home and its free home claim, if any.
+    description: Delete a named home teleport point.
     usage: /delhome <home name>
     permission: roadsandtransport.use
   horseinfo:

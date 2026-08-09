@@ -109,7 +109,7 @@ public final class DataManager {
                 String p = "homes." + playerEntry.getKey() + "." + key;
                 yaml.set(p + ".name", home.name());
                 yaml.set(p + ".location", home.location().serialize());
-                yaml.set(p + ".generated-claim-id", home.generatedClaimId() == null ? null : home.generatedClaimId().toString());
+                yaml.set(p + ".generated-claim-id", home.legacyGeneratedClaimId() == null ? null : home.legacyGeneratedClaimId().toString());
             }
         }
         save(yaml, homesFile);
