@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.6.2-alpha
+
+- Running `/home` with no name now lists the player's saved home names instead of showing a usage error.
+- Running `/delhome` with no name now shows the same home-name list before the player chooses one to delete.
+- `/home` and `/delhome` tab completion now suggests the player's saved home names for the first argument.
+
 ## 0.1.6.1-alpha
 
 - Added an inert compatibility shim for stale `HomeClaimListener.java` files left behind when a repository is updated by overlaying the 0.1.6 source tree instead of deleting removed files.

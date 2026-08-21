@@ -49,6 +49,24 @@ public final class HomeService {
         save();
     }
 
+    public List<String> names(UUID playerId) {
+        Map<String, HomeRecord> playerHomes = homes.get(playerId);
+        if (playerHomes == null || playerHomes.isEmpty()) return List.of();
+        return playerHomes.values().stream()
+                .map(HomeRecord::name)
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .toList();
+    }
+
+    public void list(Player player) {
+        List<String> names = names(player.getUniqueId());
+        if (names.isEmpty()) {
+            Messages.info(player, "You do not have any homes.");
+            return;
+        }
+        Messages.info(player, "Your homes: " + String.join(", ", names));
+    }
+
     public void create(Player player, String name) {
         String clean = name.trim();
         if (clean.isBlank() || clean.length() > 32) {

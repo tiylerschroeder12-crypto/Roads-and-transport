@@ -40,12 +40,12 @@ commands:
     usage: /createhome <home name>
     permission: roadsandtransport.use
   home:
-    description: Teleport to a named home.
-    usage: /home <home name>
+    description: List your homes or teleport to a named home.
+    usage: /home [home name]
     permission: roadsandtransport.use
   delhome:
-    description: Delete a named home teleport point.
-    usage: /delhome <home name>
+    description: List your homes or delete a named home teleport point.
+    usage: /delhome [home name]
     permission: roadsandtransport.use
   horseinfo:
     description: Inspect the horse you are looking at.

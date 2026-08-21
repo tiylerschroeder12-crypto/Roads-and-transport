@@ -1,4 +1,4 @@
-# Known Limitations — 0.1.6.1-alpha
+# Known Limitations — 0.1.6.2-alpha
 
 - KingdomsAndCurrency 0.1.5-alpha does not expose a public extension API. RoadsAndTransport therefore integrates through reflection against that version's internal model and service methods. A future KingdomsAndCurrency source refactor may require a RoadsAndTransport compatibility update.
 - Normal mail uses an elapsed-time equivalent of 24,000 ticks (20 minutes). Time spent with the server offline currently counts toward delivery.

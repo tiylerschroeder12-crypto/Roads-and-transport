@@ -55,7 +55,7 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
             }
             case "home" -> {
                 if (args.length == 0) {
-                    Messages.error(sender, "Usage: /home <home name>");
+                    homes.list((Player) sender);
                 } else if (waypoints.hasSession(((Player) sender).getUniqueId())) {
                     Messages.error(sender, "You are already preparing to travel by waypoint.");
                 } else {
@@ -63,7 +63,7 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
                 }
             }
             case "delhome" -> {
-                if (args.length == 0) Messages.error(sender, "Usage: /delhome <home name>");
+                if (args.length == 0) homes.list((Player) sender);
                 else homes.delete((Player) sender, join(args, 0));
             }
             case "horseinfo" -> horses.inspect((Player) sender);
@@ -183,7 +183,7 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
                 Messages.info(sender, "/createwaypoint public <name>, /createwaypoint personal, /waypoint <adopt|info|access>, /delwaypoint");
                 Messages.info(sender, "/mailbox create <name>, /mailbox info, /delmailbox, /createmailboxfor <player> <name>");
                 Messages.info(sender, "/mail <send|rush send|status>");
-                Messages.info(sender, "/createhome <name>, /home <name>, /delhome <name>");
+                Messages.info(sender, "/createhome <name>, /home [name], /delhome [name]");
                 Messages.info(sender, "/horseinfo, /horsetrust <player>, /horseuntrust <player>");
             }
             case "save" -> {
@@ -227,6 +227,9 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
         if (name.equals("mail")) {
             if (args.length == 1) values.addAll(List.of("send", "rush", "status"));
             else if (args.length == 2 && args[0].equalsIgnoreCase("rush")) values.add("send");
+        }
+        if ((name.equals("home") || name.equals("delhome")) && args.length == 1 && sender instanceof Player player) {
+            values.addAll(homes.names(player.getUniqueId()));
         }
         if (name.equals("rat") && args.length == 1) values.addAll(List.of("help", "save", "reload"));
         String prefix = args.length == 0 ? "" : args[args.length - 1].toLowerCase(Locale.ROOT);

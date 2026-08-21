@@ -2,7 +2,7 @@
 
 **RoadsAndTransport** is a Paper 26.2 infrastructure plugin built for a civilization server. It connects roads, waypoint travel, physical mail, homes, upgraded cargo horses, and caravan trade to the physical gold economy and claims supplied by **KingdomsAndCurrency 0.1.5-alpha**.
 
-Current version: **0.1.6.1-alpha**
+Current version: **0.1.6.2-alpha**
 
 ## Requirements
 
@@ -83,11 +83,11 @@ Players may have up to four named home teleport points:
 
 ```text
 /createhome <name>
-/home <name>
-/delhome <name>
+/home [name]
+/delhome [name]
 ```
 
-Homes are saved destinations only. Creating a home records the player's current block as a return point; it does not create, expand, reserve, or protect a KingdomsAndCurrency claim. Home travel is free, uses the configurable warm-up, and remains available during both day and night. A home remains usable if the surrounding land later changes ownership because the home is not a land claim. `/delhome <name>` removes only the teleport point. Public waypoints still close at night.
+Homes are saved destinations only. Creating a home records the player's current block as a return point; it does not create, expand, reserve, or protect a KingdomsAndCurrency claim. Running `/home` or `/delhome` without a name lists your saved home names, while supplying a name travels to or deletes that home. Home travel is free, uses the configurable warm-up, and remains available during both day and night. A home remains usable if the surrounding land later changes ownership because the home is not a land claim. `/delhome <name>` removes only the teleport point. Public waypoints still close at night.
 
 When upgrading from 0.1.5-alpha or older, RoadsAndTransport automatically removes the synthetic one-chunk claims it previously created for homes in unclaimed land while preserving the home teleport points themselves. Ordinary KingdomsAndCurrency claims are not touched.
 
@@ -129,8 +129,8 @@ At night, hostile mobs actively target cargo-equipped horses, even when their ca
 | `/mail rush send <player>` | Send a barrel immediately at rush pricing |
 | `/mail status` | Show recent shipments |
 | `/createhome <name>` | Create a named home |
-| `/home <name>` | Return to a named home |
-| `/delhome <name>` | Delete a saved home teleport point |
+| `/home [name]` | List your homes, or return to a named home |
+| `/delhome [name]` | List your homes, or delete a saved home teleport point |
 | `/horseinfo` | Inspect the targeted horse |
 | `/horsetrust <player>` | Grant cargo access |
 | `/horseuntrust <player>` | Revoke cargo access |
