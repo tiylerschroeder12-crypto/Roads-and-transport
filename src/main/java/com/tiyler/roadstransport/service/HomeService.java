@@ -73,13 +73,18 @@ public final class HomeService {
             return;
         }
 
-        Messages.info(player, "Your homes (" + names.size() + "/" + maximum + "):");
+        StringBuilder message = new StringBuilder("Your homes (")
+                .append(names.size()).append('/').append(maximum).append("):");
         for (String name : names) {
-            Messages.info(player, " - " + name);
+            message.append("\n - ").append(name);
         }
-        Messages.info(player, deleting
-                ? "Use /delhome <name> to delete a home."
-                : "Use /home <name> to return to a home.");
+        message.append(deleting
+                ? "\nUse /delhome <name> to delete a home."
+                : "\nUse /home <name> to return to a home.");
+
+        // Send the list as one component so chat formatting/anti-spam plugins cannot
+        // collapse a burst of separate list-line messages.
+        player.sendMessage(Component.text(message.toString(), NamedTextColor.GRAY));
     }
 
     public void create(Player player, String name) {

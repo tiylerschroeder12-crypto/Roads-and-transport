@@ -1,11 +1,11 @@
 # Changelog
 
-## 0.1.6.3-alpha
+## 0.1.6.4-alpha
 
-- Changed the no-argument `/home` and `/delhome` output to an explicit multi-line list so every currently saved home is visible.
-- The home list now shows the player's used/maximum home slots.
-- `/home` ends the list with the travel syntax, while `/delhome` ends it with the deletion syntax so the two commands are harder to confuse.
-- Existing home-name tab completion remains unchanged.
+- Reworked `/home` and `/delhome` tab completion so saved home names are returned as live command suggestions, including names containing spaces.
+- Bare `/home` and `/delhome` now send the full saved-home list as one multi-line chat component, avoiding line-by-line chat filtering/collapse.
+- `/delhome` uses a deletion-specific hint while `/home` uses the travel hint.
+
 
 ## 0.1.6.2-alpha
 

@@ -228,11 +228,48 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
             if (args.length == 1) values.addAll(List.of("send", "rush", "status"));
             else if (args.length == 2 && args[0].equalsIgnoreCase("rush")) values.add("send");
         }
-        if ((name.equals("home") || name.equals("delhome")) && args.length == 1 && sender instanceof Player player) {
-            values.addAll(homes.names(player.getUniqueId()));
+        if ((name.equals("home") || name.equals("delhome")) && args.length >= 1 && sender instanceof Player player) {
+            return homeNameSuggestions(player, args);
         }
         if (name.equals("rat") && args.length == 1) values.addAll(List.of("help", "save", "reload"));
         String prefix = args.length == 0 ? "" : args[args.length - 1].toLowerCase(Locale.ROOT);
         return values.stream().filter(v -> v.toLowerCase(Locale.ROOT).startsWith(prefix)).toList();
+    }
+
+    /**
+     * Bukkit/Paper tab completion replaces only the argument currently being typed.
+     * Homes may contain spaces, so returning the full home name after the first word
+     * makes later completion requests go empty. Build suggestions relative to the
+     * already-completed argument prefix instead.
+     */
+    private List<String> homeNameSuggestions(Player player, String[] args) {
+        List<String> homeNames = homes.names(player.getUniqueId());
+        if (homeNames.isEmpty()) return List.of();
+
+        int currentIndex = args.length - 1;
+        String completedPrefix = currentIndex == 0
+                ? ""
+                : String.join(" ", java.util.Arrays.copyOfRange(args, 0, currentIndex)).trim();
+        String currentToken = args[currentIndex];
+        String typed = completedPrefix.isEmpty()
+                ? currentToken
+                : completedPrefix + " " + currentToken;
+        String typedLower = typed.toLowerCase(Locale.ROOT);
+
+        List<String> suggestions = new ArrayList<>();
+        for (String homeName : homeNames) {
+            if (!homeName.toLowerCase(Locale.ROOT).startsWith(typedLower)) continue;
+
+            if (completedPrefix.isEmpty()) {
+                suggestions.add(homeName);
+                continue;
+            }
+
+            // Only replace the current argument. Example: after `/home Main `,
+            // the saved home `Main House` should suggest `House`, not `Main House`.
+            int suffixStart = Math.min(homeName.length(), completedPrefix.length() + 1);
+            suggestions.add(homeName.substring(suffixStart));
+        }
+        return suggestions;
     }
 }
