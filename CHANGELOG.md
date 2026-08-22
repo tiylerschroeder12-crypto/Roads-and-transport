@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.6.7-alpha
+
+- Replaced `/home list` with the standalone `/homelist` command so `list` is never parsed as a possible home destination.
+- `/homelist` shows every saved home alphabetically as `/home <name> [visited X times]`.
+- Bare `/home` now gives a short usage hint pointing players to `/homelist` instead of relying on the root command to render the list.
+- The home name `list` is no longer reserved; it may be used like any other home name.
+- Updated command help and playtest documentation for the standalone home-list command.
+
 ## 0.1.6.6-alpha
 
 - Removed the previous `BasicCommand` and legacy Bukkit home-completion implementations and replaced `/home` and `/delhome` with explicit Paper Brigadier command trees.

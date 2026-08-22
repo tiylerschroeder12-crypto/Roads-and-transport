@@ -83,7 +83,7 @@ public final class HomeService {
                     .append(" [visited ").append(visits).append(visits == 1 ? " time]" : " times]");
         }
         if (!deleting) {
-            message.append("\nUse /home list to show this list again.");
+            message.append("\nUse /homelist to show this list again.");
         }
 
         player.sendMessage(Component.text(message.toString(), NamedTextColor.GRAY));
@@ -101,10 +101,6 @@ public final class HomeService {
         String clean = name.trim();
         if (clean.isBlank() || clean.length() > 32) {
             Messages.error(player, "Home names must be between 1 and 32 characters.");
-            return;
-        }
-        if (clean.equalsIgnoreCase("list")) {
-            Messages.error(player, "The home name 'list' is reserved for /home list.");
             return;
         }
         Map<String, HomeRecord> playerHomes = homes.computeIfAbsent(player.getUniqueId(), ignored -> new HashMap<>());

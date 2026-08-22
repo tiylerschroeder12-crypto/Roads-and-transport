@@ -39,6 +39,10 @@ commands:
     description: Create one of your four named home teleport points.
     usage: /createhome <home name>
     permission: roadsandtransport.use
+  homelist:
+    description: List all of your saved homes and their visit counts.
+    usage: /homelist
+    permission: roadsandtransport.use
   horseinfo:
     description: Inspect the horse you are looking at.
     usage: /horseinfo

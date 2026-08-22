@@ -53,6 +53,10 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
                 if (args.length == 0) Messages.error(sender, "Usage: /createhome <home name>");
                 else homes.create((Player) sender, join(args, 0));
             }
+            case "homelist" -> {
+                if (args.length > 0) Messages.error(sender, "Usage: /homelist");
+                else homes.list((Player) sender);
+            }
             case "horseinfo" -> horses.inspect((Player) sender);
             case "horsetrust" -> horseTrust((Player) sender, args, true);
             case "horseuntrust" -> horseTrust((Player) sender, args, false);
@@ -170,7 +174,7 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
                 Messages.info(sender, "/createwaypoint public <name>, /createwaypoint personal, /waypoint <adopt|info|access>, /delwaypoint");
                 Messages.info(sender, "/mailbox create <name>, /mailbox info, /delmailbox, /createmailboxfor <player> <name>");
                 Messages.info(sender, "/mail <send|rush send|status>");
-                Messages.info(sender, "/createhome <name>, /home [name|list], /delhome [name]");
+                Messages.info(sender, "/createhome <name>, /home <name>, /homelist, /delhome <name>");
                 Messages.info(sender, "/horseinfo, /horsetrust <player>, /horseuntrust <player>");
             }
             case "save" -> {

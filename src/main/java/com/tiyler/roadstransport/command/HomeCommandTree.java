@@ -30,7 +30,7 @@ public final class HomeCommandTree {
                 .executes(ctx -> {
                     Player player = player(ctx.getSource());
                     if (player == null) return Command.SINGLE_SUCCESS;
-                    homes.list(player);
+                    Messages.info(player, "Usage: /home <name> — use /homelist to see your saved homes.");
                     return Command.SINGLE_SUCCESS;
                 })
                 .then(Commands.argument("home", StringArgumentType.greedyString())
@@ -49,10 +49,6 @@ public final class HomeCommandTree {
                             if (player == null) return Command.SINGLE_SUCCESS;
 
                             String homeName = StringArgumentType.getString(ctx, "home").trim();
-                            if (homeName.equalsIgnoreCase("list")) {
-                                homes.list(player);
-                                return Command.SINGLE_SUCCESS;
-                            }
                             if (waypoints.hasSession(player.getUniqueId())) {
                                 Messages.error(player, "You are already preparing to travel by waypoint.");
                                 return Command.SINGLE_SUCCESS;
