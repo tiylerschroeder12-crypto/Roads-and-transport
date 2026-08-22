@@ -91,7 +91,8 @@ public final class DataManager {
                     String name = s.getString("name", key);
                     BlockKey location = BlockKey.deserialize(Objects.requireNonNull(s.getString("location")));
                     UUID claimId = nullableUuid(s.getString("generated-claim-id"));
-                    homes.put(normalizeName(name), new HomeRecord(playerId, name, location, claimId));
+                    long visitCount = Math.max(0L, s.getLong("visits", 0L));
+                    homes.put(normalizeName(name), new HomeRecord(playerId, name, location, claimId, visitCount));
                 }
                 result.put(playerId, homes);
             } catch (Exception ex) {
@@ -110,6 +111,7 @@ public final class DataManager {
                 yaml.set(p + ".name", home.name());
                 yaml.set(p + ".location", home.location().serialize());
                 yaml.set(p + ".generated-claim-id", home.legacyGeneratedClaimId() == null ? null : home.legacyGeneratedClaimId().toString());
+                yaml.set(p + ".visits", home.visitCount());
             }
         }
         save(yaml, homesFile);

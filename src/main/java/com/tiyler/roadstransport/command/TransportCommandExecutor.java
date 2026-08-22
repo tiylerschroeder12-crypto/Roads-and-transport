@@ -53,19 +53,6 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
                 if (args.length == 0) Messages.error(sender, "Usage: /createhome <home name>");
                 else homes.create((Player) sender, join(args, 0));
             }
-            case "home" -> {
-                if (args.length == 0) {
-                    homes.list((Player) sender);
-                } else if (waypoints.hasSession(((Player) sender).getUniqueId())) {
-                    Messages.error(sender, "You are already preparing to travel by waypoint.");
-                } else {
-                    homes.travel((Player) sender, join(args, 0));
-                }
-            }
-            case "delhome" -> {
-                if (args.length == 0) homes.listForDeletion((Player) sender);
-                else homes.delete((Player) sender, join(args, 0));
-            }
             case "horseinfo" -> horses.inspect((Player) sender);
             case "horsetrust" -> horseTrust((Player) sender, args, true);
             case "horseuntrust" -> horseTrust((Player) sender, args, false);
@@ -183,7 +170,7 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
                 Messages.info(sender, "/createwaypoint public <name>, /createwaypoint personal, /waypoint <adopt|info|access>, /delwaypoint");
                 Messages.info(sender, "/mailbox create <name>, /mailbox info, /delmailbox, /createmailboxfor <player> <name>");
                 Messages.info(sender, "/mail <send|rush send|status>");
-                Messages.info(sender, "/createhome <name>, /home [name], /delhome [name]");
+                Messages.info(sender, "/createhome <name>, /home [name|list], /delhome [name]");
                 Messages.info(sender, "/horseinfo, /horsetrust <player>, /horseuntrust <player>");
             }
             case "save" -> {
@@ -228,48 +215,9 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
             if (args.length == 1) values.addAll(List.of("send", "rush", "status"));
             else if (args.length == 2 && args[0].equalsIgnoreCase("rush")) values.add("send");
         }
-        if ((name.equals("home") || name.equals("delhome")) && args.length >= 1 && sender instanceof Player player) {
-            return homeNameSuggestions(player, args);
-        }
         if (name.equals("rat") && args.length == 1) values.addAll(List.of("help", "save", "reload"));
         String prefix = args.length == 0 ? "" : args[args.length - 1].toLowerCase(Locale.ROOT);
         return values.stream().filter(v -> v.toLowerCase(Locale.ROOT).startsWith(prefix)).toList();
     }
 
-    /**
-     * Bukkit/Paper tab completion replaces only the argument currently being typed.
-     * Homes may contain spaces, so returning the full home name after the first word
-     * makes later completion requests go empty. Build suggestions relative to the
-     * already-completed argument prefix instead.
-     */
-    private List<String> homeNameSuggestions(Player player, String[] args) {
-        List<String> homeNames = homes.names(player.getUniqueId());
-        if (homeNames.isEmpty()) return List.of();
-
-        int currentIndex = args.length - 1;
-        String completedPrefix = currentIndex == 0
-                ? ""
-                : String.join(" ", java.util.Arrays.copyOfRange(args, 0, currentIndex)).trim();
-        String currentToken = args[currentIndex];
-        String typed = completedPrefix.isEmpty()
-                ? currentToken
-                : completedPrefix + " " + currentToken;
-        String typedLower = typed.toLowerCase(Locale.ROOT);
-
-        List<String> suggestions = new ArrayList<>();
-        for (String homeName : homeNames) {
-            if (!homeName.toLowerCase(Locale.ROOT).startsWith(typedLower)) continue;
-
-            if (completedPrefix.isEmpty()) {
-                suggestions.add(homeName);
-                continue;
-            }
-
-            // Only replace the current argument. Example: after `/home Main `,
-            // the saved home `Main House` should suggest `House`, not `Main House`.
-            int suffixStart = Math.min(homeName.length(), completedPrefix.length() + 1);
-            suggestions.add(homeName.substring(suffixStart));
-        }
-        return suggestions;
-    }
 }

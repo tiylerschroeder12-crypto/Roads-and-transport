@@ -1,7 +1,7 @@
 package com.tiyler.roadstransport;
 
 import com.tiyler.roadstransport.bridge.KingdomsBridge;
-import com.tiyler.roadstransport.command.HomePaperCommand;
+import com.tiyler.roadstransport.command.HomeCommandTree;
 import com.tiyler.roadstransport.command.TransportCommandExecutor;
 import com.tiyler.roadstransport.data.DataManager;
 import com.tiyler.roadstransport.listener.*;
@@ -9,6 +9,7 @@ import com.tiyler.roadstransport.service.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 
 import java.util.List;
 
@@ -53,13 +54,16 @@ public final class RoadsAndTransportPlugin extends JavaPlugin {
             command.setTabCompleter(commands);
         }
 
-        // Register homes through Paper's Brigadier-backed BasicCommand API. The main
-        // labels intentionally override any earlier legacy/other-plugin registrations,
-        // and the client receives an actual suggestion provider for saved home names.
-        registerCommand("home", "List your homes or teleport to a named home.", List.of(),
-                new HomePaperCommand(homes, waypoints, false));
-        registerCommand("delhome", "List your homes or delete a named home teleport point.", List.of(),
-                new HomePaperCommand(homes, waypoints, true));
+        // /home and /delhome use real Brigadier command trees instead of the previous
+        // BasicCommand/legacy-tab-completer attempts. Their greedy home-name argument
+        // has a live suggestion provider, so `/home ` and `/delhome ` immediately ask
+        // the server for this player's saved home names before any name is typed.
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            event.registrar().register(HomeCommandTree.home(homes, waypoints),
+                    "List your homes or teleport to a named home.");
+            event.registrar().register(HomeCommandTree.deleteHome(homes),
+                    "List your homes or delete a named home teleport point.");
+        });
 
         var manager = Bukkit.getPluginManager();
         manager.registerEvents(new WaypointTravelListener(waypoints, homes), this);

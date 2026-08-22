@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.6.6-alpha
+
+- Removed the previous `BasicCommand` and legacy Bukkit home-completion implementations and replaced `/home` and `/delhome` with explicit Paper Brigadier command trees.
+- `/home ` and `/delhome ` now expose a real greedy-string home-name argument with a live suggestion provider, so the client can request every saved home immediately before the player types any part of a name.
+- Added `/home list`. Bare `/home` continues to show the same list.
+- Home lists now show usage as `/home <name> [visited X times]`; `/delhome` shows the matching delete command and visit count.
+- Successful `/home <name>` teleports increment that home's persistent visit counter. Existing homes migrate automatically with 0 visits.
+- Reserved the home name `list` for the `/home list` command.
+
 ## 0.1.6.5-alpha
 
 - Moved `/home` and `/delhome` onto Paper's Brigadier-backed `BasicCommand` registration so saved home names are advertised as real client command suggestions instead of depending on the legacy Bukkit tab-completion bridge.

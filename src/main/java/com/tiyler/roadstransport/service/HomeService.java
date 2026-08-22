@@ -67,30 +67,44 @@ public final class HomeService {
     }
 
     private void list(Player player, boolean deleting) {
-        List<String> names = names(player.getUniqueId());
-        if (names.isEmpty()) {
+        List<HomeRecord> records = records(player.getUniqueId());
+        if (records.isEmpty()) {
             Messages.info(player, "You do not have any homes.");
             return;
         }
 
+        String command = deleting ? "/delhome " : "/home ";
         StringBuilder message = new StringBuilder("Your homes (")
-                .append(names.size()).append('/').append(maximum).append("):");
-        for (String name : names) {
-            message.append("\n - ").append(name);
+                .append(records.size()).append('/').append(maximum).append("):");
+        for (HomeRecord home : records) {
+            long visits = home.visitCount();
+            message.append("\n")
+                    .append(command).append(home.name())
+                    .append(" [visited ").append(visits).append(visits == 1 ? " time]" : " times]");
         }
-        message.append(deleting
-                ? "\nUse /delhome <name> to delete a home."
-                : "\nUse /home <name> to return to a home.");
+        if (!deleting) {
+            message.append("\nUse /home list to show this list again.");
+        }
 
-        // Send the list as one component so chat formatting/anti-spam plugins cannot
-        // collapse a burst of separate list-line messages.
         player.sendMessage(Component.text(message.toString(), NamedTextColor.GRAY));
+    }
+
+    private List<HomeRecord> records(UUID playerId) {
+        Map<String, HomeRecord> playerHomes = homes.get(playerId);
+        if (playerHomes == null || playerHomes.isEmpty()) return List.of();
+        return playerHomes.values().stream()
+                .sorted(Comparator.comparing(HomeRecord::name, String.CASE_INSENSITIVE_ORDER))
+                .toList();
     }
 
     public void create(Player player, String name) {
         String clean = name.trim();
         if (clean.isBlank() || clean.length() > 32) {
             Messages.error(player, "Home names must be between 1 and 32 characters.");
+            return;
+        }
+        if (clean.equalsIgnoreCase("list")) {
+            Messages.error(player, "The home name 'list' is reserved for /home list.");
             return;
         }
         Map<String, HomeRecord> playerHomes = homes.computeIfAbsent(player.getUniqueId(), ignored -> new HashMap<>());
@@ -105,7 +119,7 @@ public final class HomeService {
         }
         Location location = player.getLocation();
         HomeRecord record = new HomeRecord(player.getUniqueId(), clean,
-                com.tiyler.roadstransport.model.BlockKey.of(location), null);
+                com.tiyler.roadstransport.model.BlockKey.of(location), null, 0L);
         playerHomes.put(key, record);
         save();
         Messages.success(player, "Home Created!");
@@ -201,6 +215,16 @@ public final class HomeService {
         if (safe == null || !player.teleport(safe, PlayerTeleportEvent.TeleportCause.PLUGIN)) {
             Messages.error(player, "No safe space could be found at that home.");
             return;
+        }
+
+        Map<String, HomeRecord> playerHomes = homes.get(player.getUniqueId());
+        if (playerHomes != null) {
+            String key = normalize(home.name());
+            HomeRecord current = playerHomes.get(key);
+            if (current != null) {
+                playerHomes.put(key, current.withVisitCount(current.visitCount() + 1L));
+                save();
+            }
         }
         Messages.success(player, "Returned to " + home.name() + ".");
     }
