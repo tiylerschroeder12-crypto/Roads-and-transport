@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.6.5-alpha
+
+- Moved `/home` and `/delhome` onto Paper's Brigadier-backed `BasicCommand` registration so saved home names are advertised as real client command suggestions instead of depending on the legacy Bukkit tab-completion bridge.
+- The main `/home` and `/delhome` labels intentionally override earlier command registrations, which also prevents another plugin from silently owning the bare command names on Paper.
+- Multi-word home names remain supported by suggesting the remaining words as the player types.
+
 ## 0.1.6.4-alpha
 
 - Reworked `/home` and `/delhome` tab completion so saved home names are returned as live command suggestions, including names containing spaces.

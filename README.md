@@ -2,7 +2,7 @@
 
 **RoadsAndTransport** is a Paper 26.2 infrastructure plugin built for a civilization server. It connects roads, waypoint travel, physical mail, homes, upgraded cargo horses, and caravan trade to the physical gold economy and claims supplied by **KingdomsAndCurrency 0.1.5-alpha**.
 
-Current version: **0.1.6.4-alpha**
+Current version: **0.1.6.5-alpha**
 
 ## Requirements
 
@@ -87,7 +87,7 @@ Players may have up to four named home teleport points:
 /delhome [name]
 ```
 
-Homes are saved destinations only. Creating a home records the player's current block as a return point; it does not create, expand, reserve, or protect a KingdomsAndCurrency claim. Running `/home` or `/delhome` without a name lists your saved home names, while supplying a name travels to or deletes that home. Home travel is free, uses the configurable warm-up, and remains available during both day and night. A home remains usable if the surrounding land later changes ownership because the home is not a land claim. `/delhome <name>` removes only the teleport point. Public waypoints still close at night.
+Homes are saved destinations only. Creating a home records the player's current block as a return point; it does not create, expand, reserve, or protect a KingdomsAndCurrency claim. Typing `/home ` or `/delhome ` now asks Paper's Brigadier command tree for your own saved home names and offers them as autocomplete suggestions. Running either command without a name still lists your saved homes in chat, while supplying a name travels to or deletes that home. Home travel is free, uses the configurable warm-up, and remains available during both day and night. A home remains usable if the surrounding land later changes ownership because the home is not a land claim. `/delhome <name>` removes only the teleport point. Public waypoints still close at night.
 
 When upgrading from 0.1.5-alpha or older, RoadsAndTransport automatically removes the synthetic one-chunk claims it previously created for homes in unclaimed land while preserving the home teleport points themselves. Ordinary KingdomsAndCurrency claims are not touched.
 

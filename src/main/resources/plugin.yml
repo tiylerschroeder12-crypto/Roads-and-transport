@@ -39,14 +39,6 @@ commands:
     description: Create one of your four named home teleport points.
     usage: /createhome <home name>
     permission: roadsandtransport.use
-  home:
-    description: List your homes or teleport to a named home.
-    usage: /home [home name]
-    permission: roadsandtransport.use
-  delhome:
-    description: List your homes or delete a named home teleport point.
-    usage: /delhome [home name]
-    permission: roadsandtransport.use
   horseinfo:
     description: Inspect the horse you are looking at.
     usage: /horseinfo

@@ -1,6 +1,7 @@
 package com.tiyler.roadstransport;
 
 import com.tiyler.roadstransport.bridge.KingdomsBridge;
+import com.tiyler.roadstransport.command.HomePaperCommand;
 import com.tiyler.roadstransport.command.TransportCommandExecutor;
 import com.tiyler.roadstransport.data.DataManager;
 import com.tiyler.roadstransport.listener.*;
@@ -41,7 +42,7 @@ public final class RoadsAndTransportPlugin extends JavaPlugin {
         TransportCommandExecutor commands = new TransportCommandExecutor(this, kingdoms, waypoints, mail, homes, horses);
         for (String commandName : List.of(
                 "createwaypoint", "waypoint", "delwaypoint", "mailbox", "delmailbox", "createmailboxfor", "mail",
-                "createhome", "home", "delhome", "horseinfo", "horsetrust", "horseuntrust", "rat"
+                "createhome", "horseinfo", "horsetrust", "horseuntrust", "rat"
         )) {
             PluginCommand command = getCommand(commandName);
             if (command == null) {
@@ -51,6 +52,14 @@ public final class RoadsAndTransportPlugin extends JavaPlugin {
             command.setExecutor(commands);
             command.setTabCompleter(commands);
         }
+
+        // Register homes through Paper's Brigadier-backed BasicCommand API. The main
+        // labels intentionally override any earlier legacy/other-plugin registrations,
+        // and the client receives an actual suggestion provider for saved home names.
+        registerCommand("home", "List your homes or teleport to a named home.", List.of(),
+                new HomePaperCommand(homes, waypoints, false));
+        registerCommand("delhome", "List your homes or delete a named home teleport point.", List.of(),
+                new HomePaperCommand(homes, waypoints, true));
 
         var manager = Bukkit.getPluginManager();
         manager.registerEvents(new WaypointTravelListener(waypoints, homes), this);
