@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.6.3-alpha
+
+- Changed the no-argument `/home` and `/delhome` output to an explicit multi-line list so every currently saved home is visible.
+- The home list now shows the player's used/maximum home slots.
+- `/home` ends the list with the travel syntax, while `/delhome` ends it with the deletion syntax so the two commands are harder to confuse.
+- Existing home-name tab completion remains unchanged.
+
 ## 0.1.6.2-alpha
 
 - Running `/home` with no name now lists the player's saved home names instead of showing a usage error.

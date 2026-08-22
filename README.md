@@ -2,7 +2,7 @@
 
 **RoadsAndTransport** is a Paper 26.2 infrastructure plugin built for a civilization server. It connects roads, waypoint travel, physical mail, homes, upgraded cargo horses, and caravan trade to the physical gold economy and claims supplied by **KingdomsAndCurrency 0.1.5-alpha**.
 
-Current version: **0.1.6.2-alpha**
+Current version: **0.1.6.3-alpha**
 
 ## Requirements
 

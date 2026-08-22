@@ -59,12 +59,27 @@ public final class HomeService {
     }
 
     public void list(Player player) {
+        list(player, false);
+    }
+
+    public void listForDeletion(Player player) {
+        list(player, true);
+    }
+
+    private void list(Player player, boolean deleting) {
         List<String> names = names(player.getUniqueId());
         if (names.isEmpty()) {
             Messages.info(player, "You do not have any homes.");
             return;
         }
-        Messages.info(player, "Your homes: " + String.join(", ", names));
+
+        Messages.info(player, "Your homes (" + names.size() + "/" + maximum + "):");
+        for (String name : names) {
+            Messages.info(player, " - " + name);
+        }
+        Messages.info(player, deleting
+                ? "Use /delhome <name> to delete a home."
+                : "Use /home <name> to return to a home.");
     }
 
     public void create(Player player, String name) {

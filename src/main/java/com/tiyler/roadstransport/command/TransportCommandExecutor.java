@@ -63,7 +63,7 @@ public final class TransportCommandExecutor implements CommandExecutor, TabCompl
                 }
             }
             case "delhome" -> {
-                if (args.length == 0) homes.list((Player) sender);
+                if (args.length == 0) homes.listForDeletion((Player) sender);
                 else homes.delete((Player) sender, join(args, 0));
             }
             case "horseinfo" -> horses.inspect((Player) sender);
