@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.6.8-alpha
+
+- Simplified the Home warm-up presentation. Starting `/home <name>` now prints a two-line message with the destination name and the three direct player-controlled cancellation methods: sneaking, moving, or opening inventory.
+- Replaced the long repeating action-bar sentence with a compact `Teleporting in X...` countdown. Damage, attacking, logout, and the existing safety checks still cancel travel as before.
+
 ## 0.1.6.7-alpha
 
 - Replaced `/home list` with the standalone `/homelist` command so `list` is never parsed as a possible home destination.

@@ -149,6 +149,11 @@ public final class HomeService {
             Messages.error(player, "You are already preparing to travel home.");
             return;
         }
+
+        player.sendMessage(Component.text("             Teleporting to " + record.name(), NamedTextColor.AQUA)
+                .append(Component.newline())
+                .append(Component.text("Sneak, move, or open your inventory to cancel", NamedTextColor.GRAY)));
+
         Location origin = player.getLocation().clone();
         int[] remaining = {warmupSeconds};
         int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
@@ -163,8 +168,7 @@ public final class HomeService {
                 complete(player, record);
                 return;
             }
-            player.sendActionBar(Component.text("Returning to " + record.name() + " in " + remaining[0]
-                    + " seconds — Move or sneak to cancel. Teleport will be canceled if damage is taken.", NamedTextColor.AQUA));
+            player.sendActionBar(Component.text("Teleporting in " + remaining[0] + "...", NamedTextColor.AQUA));
             remaining[0]--;
         }, 0L, 20L);
         sessions.put(player.getUniqueId(), new TravelSession(player.getUniqueId(), null, origin, 0,

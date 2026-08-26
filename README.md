@@ -2,7 +2,7 @@
 
 **RoadsAndTransport** is a Paper 26.2 infrastructure plugin built for a civilization server. It connects roads, waypoint travel, physical mail, homes, upgraded cargo horses, and caravan trade to the physical gold economy and claims supplied by **KingdomsAndCurrency 0.1.5-alpha**.
 
-Current version: **0.1.6.7-alpha**
+Current version: **0.1.6.8-alpha**
 
 ## Requirements
 
@@ -89,6 +89,8 @@ Players may have up to four named home teleport points:
 ```
 
 Homes are saved destinations only. Creating a home records the player's current block as a return point; it does not create, expand, reserve, or protect a KingdomsAndCurrency claim. `/home` and `/delhome` use explicit Paper Brigadier command trees intended to suggest the player's saved home names while typing. `/homelist` is the dedicated list command and shows every saved home as `/home <name> [visited X times]`; successful home teleports increment that persistent counter. Existing homes begin at 0 recorded visits when upgraded. Because listing is now a separate command, `list` is an ordinary valid home name again. Home travel is free, uses the configurable warm-up, and remains available during both day and night. A home remains usable if the surrounding land later changes ownership because the home is not a land claim. `/delhome <name>` removes only the teleport point. Public waypoints still close at night.
+
+Starting a Home warm-up prints `Teleporting to <home>` followed by `Sneak, move, or open your inventory to cancel`; the action bar then carries only the short remaining-seconds countdown.
 
 When upgrading from 0.1.5-alpha or older, RoadsAndTransport automatically removes the synthetic one-chunk claims it previously created for homes in unclaimed land while preserving the home teleport points themselves. Ordinary KingdomsAndCurrency claims are not touched.
 
